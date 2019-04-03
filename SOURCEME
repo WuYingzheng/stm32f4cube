@@ -1,0 +1,1 @@
+export STM32_SDK_DIR=$(pwd)
