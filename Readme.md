@@ -4,6 +4,9 @@
    * cd $(STM32_SDK_DIR)
    * source SOURCEME
 
+# git push
+   * git push -u origin master
+
 **STM32Cube** is an STMicroelectronics original initiative to ease the developers life by reducing efforts, time and cost.
 
 **STM32Cube** covers the overall STM32 products portfolio. It includes a comprehensive embedded software platform (this repo), delivered for each series (such as the STM32CubeF4 for the STM32F4 series).
