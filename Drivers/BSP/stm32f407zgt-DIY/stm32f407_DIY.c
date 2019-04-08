@@ -61,14 +61,11 @@
 /** @defgroup STM32F4_DISCOVERY_LOW_LEVEL_Private_Variables STM32F4 DISCOVERY LOW LEVEL Private Variables
   * @{
   */ 
-GPIO_TypeDef* GPIO_PORT[LEDn] = {LED4_GPIO_PORT, 
-                                 LED3_GPIO_PORT, 
-                                 LED5_GPIO_PORT,
-                                 LED6_GPIO_PORT};
-const uint16_t GPIO_PIN[LEDn] = {LED4_PIN, 
-                                 LED3_PIN, 
-                                 LED5_PIN,
-                                 LED6_PIN};
+GPIO_TypeDef* GPIO_PORT[LEDn] = {LED0_GPIO_PORT,
+                                 LED1_GPIO_PORT};
+                                
+const uint16_t GPIO_PIN[LEDn] = {LED0_PIN,
+                                 LED1_PIN};
 
 GPIO_TypeDef* BUTTON_PORT[BUTTONn] = {KEY_BUTTON_GPIO_PORT}; 
 const uint16_t BUTTON_PIN[BUTTONn] = {KEY_BUTTON_PIN}; 
@@ -136,10 +133,8 @@ uint32_t BSP_GetVersion(void)
   * @brief  Configures LED GPIO.
   * @param  Led: Specifies the Led to be configured. 
   *   This parameter can be one of following parameters:
-  *     @arg LED4
-  *     @arg LED3
-  *     @arg LED5
-  *     @arg LED6
+  *     @arg LED0
+  *     @arg LED1
   */
 void BSP_LED_Init(Led_TypeDef Led)
 {
@@ -156,45 +151,39 @@ void BSP_LED_Init(Led_TypeDef Led)
   
   HAL_GPIO_Init(GPIO_PORT[Led], &GPIO_InitStruct);
   
-  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
+  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_SET); //关闭led灯
 }
 
 /**
   * @brief  Turns selected LED On.
   * @param  Led: Specifies the Led to be set on. 
   *   This parameter can be one of following parameters:
-  *     @arg LED4
-  *     @arg LED3
-  *     @arg LED5
-  *     @arg LED6  
+  *     @arg LED０
+  *     @arg LED１
   */
-void BSP_LED_On(Led_TypeDef Led)
-{
-  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_SET); 
+void BSP_LED_On(Led_TypeDef Led){
+  // 高电平截止，低电平导通
+  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
 }
 
 /**
   * @brief  Turns selected LED Off.
   * @param  Led: Specifies the Led to be set off. 
   *   This parameter can be one of following parameters:
-  *     @arg LED4
-  *     @arg LED3
-  *     @arg LED5
-  *     @arg LED6 
+  *     @arg LED0
+  *     @arg LED1
   */
-void BSP_LED_Off(Led_TypeDef Led)
-{
-  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_RESET); 
+void BSP_LED_Off(Led_TypeDef Led){
+  // 高电平截止，低电平导通
+  HAL_GPIO_WritePin(GPIO_PORT[Led], GPIO_PIN[Led], GPIO_PIN_SET); 
 }
 
 /**
   * @brief  Toggles the selected LED.
   * @param  Led: Specifies the Led to be toggled. 
   *   This parameter can be one of following parameters:
-  *     @arg LED4
-  *     @arg LED3
-  *     @arg LED5
-  *     @arg LED6  
+  *     @arg LED0
+  *     @arg LED1
   */
 void BSP_LED_Toggle(Led_TypeDef Led)
 {

@@ -1,3 +1,8 @@
+# led闪烁程序
+    实现led0和led1的闪烁，main程序中包含了两种实现方式
+    1.stm32 hal库的实现方式
+    2.bsp的实现方式
+
 # 开发板
     stm32f429discovery
 

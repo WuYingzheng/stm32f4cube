@@ -45,10 +45,10 @@ static void delay(int tms){
 int main(void){
   HAL_Init();
   SystemClock_Config();
-  __HAL_RCC_GPIOF_CLK_ENABLE();
 
 // HAL库的开发方式
 /* 
+  __HAL_RCC_GPIOF_CLK_ENABLE();
   GPIO_InitTypeDef  GPIO_InitStructure;
   GPIO_InitStructure.Pin = GPIO_PIN_9|GPIO_PIN_10;
   GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
