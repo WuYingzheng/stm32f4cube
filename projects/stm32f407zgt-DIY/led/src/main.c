@@ -10,6 +10,9 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f407_DIY.h"
 
+#include "stm32f4xx_hal_gpio.h"
+#include "stm32f4xx_hal_rcc.h"
+
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
   */
@@ -28,42 +31,47 @@ static void Error_Handler(void);
 static void EXTILine0_Config(void);
 
 /* Private functions ---------------------------------------------------------*/
+static void delay(int tms){
+  while(tms!=0)
+    tms--;
+}
+
 
 /**
   * @brief  Main program
   * @param  None
   * @retval None
   */
-int main(void)
-{
- /* This sample code shows how to use STM32F4xx GPIO HAL API to toggle PD12, PD13,
-    PD14, and PD14 IOs (connected to LED4, LED3, LED5 and LED6 on STM32F401C-DISCO board (MB1115B)) 
-    in an infinite loop.
-    To proceed, 3 steps are required: */
-
-  /* STM32F4xx HAL library initialization:
-       - Configure the Flash prefetch, instruction and Data caches
-       - Configure the Systick to generate an interrupt each 1 msec
-       - Set NVIC Group Priority to 4
-       - Global MSP (MCU Support Package) initialization
-     */
+int main(void){
   HAL_Init();
- 
-  /* Configure LED3, LED4, LED5 and LED6 */
-  BSP_LED_Init(LED3);
-  BSP_LED_Init(LED4);
-  BSP_LED_Init(LED5);
-  BSP_LED_Init(LED6);
-
-  /* Configure the system clock to 168 MHz */
   SystemClock_Config();
-  
+  __HAL_RCC_GPIOF_CLK_ENABLE();
+
+// HAL库的开发方式
+/* 
+  GPIO_InitTypeDef  GPIO_InitStructure;
+  GPIO_InitStructure.Pin = GPIO_PIN_9|GPIO_PIN_10;
+  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
+  GPIO_InitStructure.Pull = GPIO_PULLUP;;
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStructure);
+
+  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_SET); // 关灯
+  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_RESET); // 开灯
+  HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10);
+*/
+
+  BSP_LED_Init(LED0);
+  BSP_LED_Init(LED1);
+
   /* Configure EXTI Line0 (connected to PA0 pin) in interrupt mode */
-  EXTILine0_Config();
+//  EXTILine0_Config();
   
   /* Infinite loop */
-  while (1)
-  {
+  while (1){
+    delay(0xfffff);
+    BSP_LED_Toggle(LED0);
+    BSP_LED_Toggle(LED1);
   }
 }
 
@@ -167,13 +175,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   if(GPIO_Pin == KEY_BUTTON_PIN)
   {
     /* Toggle LED3 */
-    BSP_LED_Toggle(LED3);
+    BSP_LED_Toggle(LED0);
     /* Toggle LED4 */
-    BSP_LED_Toggle(LED4);    
-    /* Toggle LED5 */
-    BSP_LED_Toggle(LED5);   
-    /* Toggle LED6 */
-    BSP_LED_Toggle(LED6);
+    BSP_LED_Toggle(LED1);    
   }
 }
 
@@ -185,7 +189,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 static void Error_Handler(void)
 {
   /* Turn LED5 on */
-  BSP_LED_On(LED5);
+  BSP_LED_On(LED0);
   while(1)
   {
   }

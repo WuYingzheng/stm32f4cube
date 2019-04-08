@@ -142,11 +142,10 @@ endif
 clean:
 	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-flash:
-	openocd -f  board/stm32f429discovery.cfg\
+flash: $(BINDIR)/$(BINELF)
+	openocd -f  interface/jlink.cfg -f target/stm32f4x.cfg\
     -c "init" \
     -c "reset init" \
-    -c "flash probe 0"\
     -c "flash info 0"\
     -c "program bin/"$(BINELF)" verify reset" \
     -c "reset run"\
