@@ -10,8 +10,7 @@
 #include "stm32f4xx_hal.h"
 #include "stm32f407_DIY.h"
 
-#include "stm32f4xx_hal_gpio.h"
-#include "stm32f4xx_hal_rcc.h"
+#include "flash_if.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -22,14 +21,18 @@
   */ 
 
 /* Private typedef -----------------------------------------------------------*/
+typedef void (*pFunction)(void);
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+static UART_HandleTypeDef uartHandle;
+uint32_t JumpAddress;
+
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
-static void EXTILine0_Config(void);
-
+static void EXTILine4_Config(void);
+pFunction Jump2Application;
 /* Private functions ---------------------------------------------------------*/
 static void delay(int tms){
   while(tms!=0)
@@ -44,35 +47,34 @@ static void delay(int tms){
   */
 int main(void){
   HAL_Init();
+
   SystemClock_Config();
-
-// HAL库的开发方式
-/* 
-  __HAL_RCC_GPIOF_CLK_ENABLE();
-  GPIO_InitTypeDef  GPIO_InitStructure;
-  GPIO_InitStructure.Pin = GPIO_PIN_9|GPIO_PIN_10;
-  GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
-  GPIO_InitStructure.Pull = GPIO_PULLUP;;
-  HAL_GPIO_Init(GPIOF, &GPIO_InitStructure);
-
-  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_SET); // 关灯
-  HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_RESET); // 开灯
-  HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10);
-*/
 
   BSP_LED_Init(LED0);
   BSP_LED_Init(LED1);
 
-  /* Configure EXTI Line0 (connected to PA0 pin) in interrupt mode */
-//  EXTILine0_Config();
-  
-  /* Infinite loop */
-  while (1){
-    delay(0xfffff);
-    BSP_LED_Toggle(LED0);
-    BSP_LED_Toggle(LED1);
+  BSP_BUTTON_Init(BUTTON0,BUTTON_MODE_GPIO);
+  if(BSP_BUTTON_GetState(BUTTON0)==GPIO_PIN_SET){
+    BSP_LED_On(LED0);
+
+
+  }else{
+    BSP_LED_On(LED1);
+    /* Test if user code is programmed starting from address "APPLICATION_ADDRESS" */
+    //if (((*(__IO uint32_t*)APPLICATION_ADDRESS) & 0x2FFE0000 ) == 0x20000000)
+    if(1){
+      /* Jump to user application */
+      JumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
+      Jump2Application = (pFunction) JumpAddress;
+      /* Initialize user application's Stack Pointer */
+      __set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
+      Jump2Application();
+    }else{
+      BSP_LED_On(LED1);
+      BSP_LED_On(LED0);
+    }
   }
+
 }
 
 /**
@@ -147,22 +149,15 @@ static void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-static void EXTILine0_Config(void)
-{
-  GPIO_InitTypeDef   GPIO_InitStructure;
+static void IAP_init(){
+  uartHandle.Init.BaudRate = 115200;
+  uartHandle.Init.WordLength = UART_WORDLENGTH_8B;
+  uartHandle.Init.StopBits = UART_STOPBITS_1;
+  uartHandle.Init.Parity = UART_PARITY_NONE;
+  uartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  uartHandle.Init.Mode = UART_MODE_RX | UART_MODE_TX;
 
-  /* Enable GPIOA clock */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
-  
-  /* Configure PA0 pin as input floating */
-  GPIO_InitStructure.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStructure.Pull = GPIO_NOPULL;
-  GPIO_InitStructure.Pin = GPIO_PIN_0;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-  /* Enable and set EXTI Line0 Interrupt to the lowest priority */
-  HAL_NVIC_SetPriority(EXTI0_IRQn, 2, 0);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  //BSP_COM_Init(COM1, &uartHandle);
 }
 
 /**
@@ -172,7 +167,7 @@ static void EXTILine0_Config(void)
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  //if(GPIO_Pin == KEY_BUTTON_PIN)
+  if(GPIO_Pin == BUTTON0_PIN)
   {
     /* Toggle LED3 */
     BSP_LED_Toggle(LED0);
@@ -186,14 +181,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   * @param  None
   * @retval None
   */
-static void Error_Handler(void)
-{
+static void Error_Handler(void){
   /* Turn LED5 on */
   BSP_LED_On(LED0);
-  while(1)
-  {
+  while(1){
   }
 }
+
+
 
 #ifdef  USE_FULL_ASSERT
 
