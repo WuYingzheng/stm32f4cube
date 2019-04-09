@@ -42,7 +42,10 @@ typedef enum {
 
 typedef enum 
 {  
-  BUTTON_KEY = 0,
+  BUTTON0 = 0,
+  BUTTON1,
+  BUTTON2,
+  BUTTONn
 } Button_TypeDef;
 
 typedef enum 
@@ -93,21 +96,34 @@ typedef enum
 /** @defgroup STM32F4_DISCOVERY_LOW_LEVEL_BUTTON STM32F4 DISCOVERY LOW LEVEL BUTTON
   * @{
   */  
-#define BUTTONn                          1 
 
 /**
  * @brief Wakeup push-button
  */
-#define KEY_BUTTON_PIN                GPIO_PIN_0
-#define KEY_BUTTON_GPIO_PORT          GPIOA
-#define KEY_BUTTON_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOA_CLK_ENABLE()
-#define KEY_BUTTON_GPIO_CLK_DISABLE() __HAL_RCC_GPIOA_CLK_DISABLE()
-#define KEY_BUTTON_EXTI_IRQn          EXTI0_IRQn 
+#define BUTTON_PORT                GPIOE
 
-#define BUTTONx_GPIO_CLK_ENABLE(__INDEX__)    do{if((__INDEX__) == 0) KEY_BUTTON_GPIO_CLK_ENABLE(); \
+#define BUTTON0_PIN                GPIO_PIN_4
+#define BUTTON0_GPIO_PORT          GPIOE
+#define BUTTON0_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOE_CLK_ENABLE()
+#define BUTTON0_GPIO_CLK_DISABLE() __HAL_RCC_GPIOE_CLK_DISABLE()
+#define BUTTON0_EXTI_IRQn          EXTI4_IRQn 
+
+#define BUTTON1_PIN                GPIO_PIN_3
+#define BUTTON1_GPIO_PORT          GPIOE
+#define BUTTON1_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOE_CLK_ENABLE()
+#define BUTTON1_GPIO_CLK_DISABLE() __HAL_RCC_GPIOE_CLK_DISABLE()
+#define BUTTON1_EXTI_IRQn          EXTI3_IRQn 
+
+#define BUTTON2_PIN                GPIO_PIN_2
+#define BUTTON2_GPIO_PORT          GPIOE
+#define BUTTON2_GPIO_CLK_ENABLE()  __HAL_RCC_GPIOE_CLK_ENABLE()
+#define BUTTON2_GPIO_CLK_DISABLE() __HAL_RCC_GPIOE_CLK_DISABLE()
+#define BUTTON2_EXTI_IRQn          EXTI2_IRQn 
+
+#define BUTTONx_GPIO_CLK_ENABLE(__INDEX__)    do{   __HAL_RCC_GPIOE_CLK_ENABLE(); \
                                                 }while(0)
 
-#define BUTTONx_GPIO_CLK_DISABLE(__INDEX__)    do{if((__INDEX__) == 0) KEY_BUTTON_GPIO_CLK_DISABLE(); \
+#define BUTTONx_GPIO_CLK_DISABLE(__INDEX__)    do{ __HAL_RCC_GPIOE_CLK_DISABLE(); \
                                                  }while(0)
 /**
   * @}
@@ -226,8 +242,10 @@ void     BSP_LED_Init(Led_TypeDef Led);
 void     BSP_LED_On(Led_TypeDef Led);
 void     BSP_LED_Off(Led_TypeDef Led);
 void     BSP_LED_Toggle(Led_TypeDef Led);
-void     BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode);
-uint32_t BSP_PB_GetState(Button_TypeDef Button);
+void     BSP_BUTTON_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode);
+uint32_t BSP_BUTTON_GetState(Button_TypeDef Button);
+void     BSP_UARTx_Init(USART_TypeDef *USARTx,uint32_t BaudRate);
+
 
 /**
   * @}

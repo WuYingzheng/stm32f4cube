@@ -66,10 +66,16 @@ GPIO_TypeDef* GPIO_PORT[LEDn] = {LED0_GPIO_PORT,
                                 
 const uint16_t GPIO_PIN[LEDn] = {LED0_PIN,
                                  LED1_PIN};
+                                
+//---------------------------------- KEY -----------------------------------------
 
-GPIO_TypeDef* BUTTON_PORT[BUTTONn] = {KEY_BUTTON_GPIO_PORT}; 
-const uint16_t BUTTON_PIN[BUTTONn] = {KEY_BUTTON_PIN}; 
-const uint8_t BUTTON_IRQn[BUTTONn] = {KEY_BUTTON_EXTI_IRQn};
+const uint16_t BUTTON_PIN[BUTTONn] = {BUTTON0_PIN,
+                                      BUTTON1_PIN,  
+                                      BUTTON2_PIN};
+
+const uint8_t BUTTON_IRQn[BUTTONn] = {BUTTON0_EXTI_IRQn,
+                                      BUTTON1_EXTI_IRQn,
+                                      BUTTON2_EXTI_IRQn};
 
 uint32_t I2cxTimeout = I2Cx_TIMEOUT_MAX;    /*<! Value of Timeout when I2C communication fails */ 
 uint32_t SpixTimeout = SPIx_TIMEOUT_MAX;    /*<! Value of Timeout when SPI communication fails */
@@ -185,8 +191,7 @@ void BSP_LED_Off(Led_TypeDef Led){
   *     @arg LED0
   *     @arg LED1
   */
-void BSP_LED_Toggle(Led_TypeDef Led)
-{
+void BSP_LED_Toggle(Led_TypeDef Led){
   HAL_GPIO_TogglePin(GPIO_PORT[Led], GPIO_PIN[Led]);
 }
 
@@ -208,7 +213,7 @@ void BSP_LED_Toggle(Led_TypeDef Led)
   *     @arg BUTTON_MODE_EXTI: Button will be connected to EXTI line with interrupt
   *                            generation capability  
   */
-void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode)
+void BSP_BUTTON_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode)
 {
   GPIO_InitTypeDef GPIO_InitStruct;
   
@@ -220,23 +225,21 @@ void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode)
     /* Configure Button pin as input */
     GPIO_InitStruct.Pin = BUTTON_PIN[Button];
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = Button==BUTTON0?  GPIO_PULLDOWN:GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
     
-    HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
+    HAL_GPIO_Init(BUTTON_PORT, &GPIO_InitStruct);
   }
   
-  if (Mode == BUTTON_MODE_EXTI)
-  {
+  if (Mode == BUTTON_MODE_EXTI){
     /* Configure Button pin as input with External interrupt */
-    GPIO_InitStruct.Pin = BUTTON_PIN[Button];
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FAST;
-    GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING; 
-    HAL_GPIO_Init(BUTTON_PORT[Button], &GPIO_InitStruct);
-    
-    /* Enable and set Button EXTI Interrupt to the lowest priority */
-    HAL_NVIC_SetPriority((IRQn_Type)(BUTTON_IRQn[Button]), 0x0F, 0);
+    GPIO_InitStruct.Mode = Button==BUTTON0? GPIO_MODE_IT_RISING:GPIO_MODE_IT_FALLING;
+    GPIO_InitStruct.Pull = Button==BUTTON0?  GPIO_PULLDOWN:GPIO_PULLUP;
+    GPIO_InitStruct.Pin = BUTTON_PIN[Button];
+    HAL_GPIO_Init(BUTTON_PORT, &GPIO_InitStruct);
+    /* Enable and set EXTI Line0 Interrupt to the lowest priority */
+    HAL_NVIC_SetPriority((IRQn_Type)(BUTTON_IRQn[Button]), 2, 0);
     HAL_NVIC_EnableIRQ((IRQn_Type)(BUTTON_IRQn[Button]));
   }
 }
@@ -247,9 +250,9 @@ void BSP_PB_Init(Button_TypeDef Button, ButtonMode_TypeDef Mode)
   *   This parameter should be: BUTTON_KEY  
   * @retval The Button GPIO pin value.
   */
-uint32_t BSP_PB_GetState(Button_TypeDef Button)
+uint32_t BSP_BUTTON_GetState(Button_TypeDef Button)
 {
-  return HAL_GPIO_ReadPin(BUTTON_PORT[Button], BUTTON_PIN[Button]);
+  return HAL_GPIO_ReadPin(BUTTON_PORT , BUTTON_PIN[Button]);
 }
 
 /**
@@ -345,6 +348,24 @@ static void SPIx_MspInit(void)
   GPIO_InitStructure.Alternate = DISCOVERY_SPIx_AF;
   HAL_GPIO_Init(DISCOVERY_SPIx_GPIO_PORT, &GPIO_InitStructure);
 }
+
+/******************************* UART Routines**********************************/
+// 开发板的uart1与usb-com口通过ch340桥接起来，使用该com口需要将　reset按钮旁边的Ａ9-->URX , A10-->UTX;
+// USART1
+void BSP_UARTx_Init(USART_TypeDef *USARTx,uint32_t BaudRate){
+  UART_HandleTypeDef UartHandle;
+  UartHandle.Instance          = USARTx;
+  
+  UartHandle.Init.BaudRate     = BaudRate;
+  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
+  UartHandle.Init.StopBits     = UART_STOPBITS_1;
+  UartHandle.Init.Parity       = UART_PARITY_NONE;
+  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
+  UartHandle.Init.Mode         = UART_MODE_TX_RX;
+  UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
+  HAL_UART_Init(&UartHandle);
+}
+
 
 /******************************* I2C Routines**********************************/
 /**
