@@ -197,6 +197,9 @@ int main(void)
   HAL_Delay(100);
   BSP_LCD_DisplayOn(); /*turn display On after background initialization */
   
+
+  BSP_LCD_SetTextColor(LCD_COLOR_RED);
+  BSP_LCD_DisplayStringAtLine(8, (uint8_t*)"hello world...      ");
   /* Infinite loop */
   while(1)
   { 
@@ -207,8 +210,7 @@ int main(void)
       /* Format the string */
       sprintf ((char*)str, "TOP/%-11.11s", pDirectoryFiles[counter]);
       
-      if (Storage_CheckBitmapFile((const char*)str, &uwBmplen) == 0)
-      {
+      if (Storage_CheckBitmapFile((const char*)str, &uwBmplen) == 0){
         /* Format the string */
         sprintf ((char*)str, "TOP/%-11.11s", pDirectoryFiles[counter]);
         

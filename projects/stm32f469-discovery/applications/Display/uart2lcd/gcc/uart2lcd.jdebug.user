@@ -1,0 +1,18 @@
+OpenDocument="startup_stm32f469xx.s", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/gcc/boot/startup_stm32f469xx.s", Line=67
+OpenDocument="stm32469i_discovery_lcd.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_lcd.c", Line=774
+OpenDocument="core_cm4.h", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/CMSIS/Core/Include/core_cm4.h", Line=1645
+OpenDocument="stm32f4xx_hal_cortex.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c", Line=130
+OpenDocument="stm32f4xx_hal.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c", Line=144
+OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/src/main.c", Line=29
+OpenToolbar="Debug", Floating=0, x=0, y=0
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=433, h=437, FilterBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=433, h=364, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1478, h=125, FilterBarShown=0, EditorAddress=0x0
+OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=433, h=437, FilterBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=471, h=824, FilterBarShown=1
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=369, h=125, FilterBarShown=0
+TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;259]
+TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[120;254;98;57]
+TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[57;69;48;57;259]
+TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]

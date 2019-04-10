@@ -140,7 +140,17 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-flash: release
+j-flash:release
+	openocd  -f board/stm32f469-jlink.cfg\
+	 -c init \
+	 -c targets \
+	 -c "halt" \
+	 -c "flash write_image erase bin/$(BINELF)" \
+	 -c "verify_image bin/outp.elf" \
+	 -c "reset run" \
+	 -c shutdown
+
+st-flash: release
 	openocd -f  board/stm32f429discovery.cfg\
     -c "init" \
     -c "reset init" \

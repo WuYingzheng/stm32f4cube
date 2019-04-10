@@ -34,8 +34,8 @@ INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设�
 INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
 
 include subMake/bsp.mk
+# 由于shell运行顺序的问题，下面这条语句可能回到最后才复制，可能造成后续的flag错位
 #CSOURCES+=$(shell find -L $(BSP_COMPONENTS_DIR) -name '*.c')
-
 INCLUDES+=$(BSP_INC_DIR) $(BSP_COMPONENTS_INC)
 CSOURCES+=$(BSP_SOURCES) $(BSP_COMPONENTS_SRC)
 

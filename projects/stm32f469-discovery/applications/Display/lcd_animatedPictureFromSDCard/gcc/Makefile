@@ -42,11 +42,15 @@ include $(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.mk
 INCLUDES+=$(HAL_INC)
 CSOURCES+=$(HAL_SOURCES)
 
-################################## ADD YOUR CONPONENTS HERE ###############################
+################################## ADD YOUR CONPONENTS HERE ###########################
 #FreeRTOS_PATH=$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source
 #include $(FreeRTOS_PATH)/Makefile
-#INCLUDES+=$(FreeRTOS_INC_DIR)
+#INCLUDES+=$(FreeRTOS_INC)
 #CSOURCES+=$(FreeRTOS_SRC)
+
+include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
+INCLUDES+=$(FatFS_INC)
+CSOURCES+=$(FatFS_SRC)
 
 #######################################################################################
 # Find libraries
@@ -132,7 +136,7 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-flash:
+flash: release
 	openocd -f  board/stm32f429discovery.cfg\
     -c "init" \
     -c "reset init" \

@@ -15,6 +15,7 @@
     >> 烧录完成后，开发板上的led1,led3会交替闪烁    
 
 # 调试程序：
+    需要调试程序请确保编译debug版本，否则程序缺少调试符号.
     在一个终端中登录　openocd -f board/stm32f429discovery.cfg
     打开一个新的终端调试：　arm-none-eabi-gdb -x gdbinit bin/outp.elf
     成功进入调试后，RGB灯会跳动．．．

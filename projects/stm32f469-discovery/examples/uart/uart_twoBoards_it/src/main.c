@@ -331,7 +331,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
   
   /* Turn LED3 on: Transfer in reception process is correct */
   BSP_LED_On(LED3);
-  
 }
 
 /**
