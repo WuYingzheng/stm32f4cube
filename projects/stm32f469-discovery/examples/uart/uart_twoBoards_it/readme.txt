@@ -39,8 +39,8 @@ This example describes an UART transmission (transmit/receive) in interrupt mode
 between two boards.
 
 Board: STM32469I-DISCOVERY (embeds a STM32469I device)
-Tx Pin: PC6 (pin6 in CN12 connector)
-Rx Pin: PC7 (pin8 in CN12 connector)
+Tx Pin: PC6 (pin6 in CN12 connector) ６号引脚
+Rx Pin: PC7 (pin8 in CN12 connector) ８号引脚
    _________________________                       _________________________ 
   |           ______________|                     |______________           |
   |          |USART         |                     |         USART|          |

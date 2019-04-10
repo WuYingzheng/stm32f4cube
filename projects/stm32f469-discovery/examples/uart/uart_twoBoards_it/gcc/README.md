@@ -1,5 +1,9 @@
 # UART同通信例程
-    开发板连线方式参考上一级目录README.md
+    连接器２号引脚　GND
+    连接器６号引脚　tx
+    连接器８号引脚　rx
+
+    开发板连线方式具体参考上一级目录README.md
 
 # 开发环境
     开发板     stm32f429discovery
