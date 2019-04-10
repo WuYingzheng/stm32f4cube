@@ -14,7 +14,7 @@ SIZE=arm-none-eabi-size
 A2L=arm-none-eabi-addr2line
 
 BINDIR=bin
-INCDIR=inc 
+INCDIR=../inc 
 SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
 
 
@@ -120,7 +120,17 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-flash:
+j-flash:release
+	openocd  -f board/stm32f469-jlink.cfg\
+	 -c init \
+	 -c targets \
+	 -c "halt" \
+	 -c "flash write_image erase bin/$(BINELF)" \
+	 -c "verify_image bin/outp.elf" \
+	 -c "reset run" \
+	 -c shutdown
+
+st-flash:
 	openocd -f  board/stm32f429discovery.cfg\
     -c "init" \
     -c "reset init" \
