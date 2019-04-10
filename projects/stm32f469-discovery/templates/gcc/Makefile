@@ -1,6 +1,6 @@
 STM32_SDK_DIR=../../../..
-
-DEVICE=STM32F469xx          #　这个变量用来指定单片机的型号，编译时传递给底层的hal文件
+#　这个变量用来指定单片机的型号，编译时传递给底层的hal文件
+DEVICE=STM32F469xx
 
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
@@ -52,8 +52,8 @@ BINHEX=outp.hex
 MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian \
 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb-interwork
 
-DEFS=-DUSE_STDPERIPH_DRIVER -DSTM32F4XX　 
-CFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -D$(DEVICE)
+DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
+CFLAGS=-c $(MCUFLAGS) $(INCLUDES) $(DEFS)  
 CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
 # LINKER FLAGS
 LDSCRIPT=STM32F469NIHx_FLASH.ld
