@@ -1,7 +1,8 @@
-# 开发板
-    stm32f429discovery
+# UART同通信例程
+    开发板连线方式参考上一级目录README.md
 
 # 开发环境
+    开发板     stm32f429discovery
     编译器安装：https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm
     openocd
     stlink
@@ -12,9 +13,9 @@
 
 # 烧录程序：
     make flash
-
-
-    >> 烧录完成后，按开发板上的user按键，led1会亮或灭    
+    >> 烧录完成后，led2会闪烁;
+    >> 按开发板上的user按键，开始发送信息，发送成功后led1被点亮；
+    >> 成功接收到串口信息后led3会被点亮；    
 
 # 调试程序：
     在一个终端中登录　openocd -f board/stm32f429discovery.cfg
