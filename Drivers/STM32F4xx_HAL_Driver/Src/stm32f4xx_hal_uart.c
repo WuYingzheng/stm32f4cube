@@ -1221,7 +1221,10 @@ HAL_StatusTypeDef HAL_UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData
 }
 
 /**
-  * @brief  Receives an amount of data in non blocking mode.
+  * @brief  Receives an amount of data in non blocking mode　接收指定字节数到ｂuff中.
+  *         显示使能中断接收，随后返回；
+  *         随后uart中断函数负责将数据拷贝到buff中．
+  *           
   * @param  huart  Pointer to a UART_HandleTypeDef structure that contains
   *                the configuration information for the specified UART module.
   * @param  pData Pointer to data buffer
