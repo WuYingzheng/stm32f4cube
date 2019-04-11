@@ -1,6 +1,13 @@
-STM32_SDK_DIR=../../../../../..
-#　这个变量用来指定单片机的型号，编译时传递给底层的hal文件
-DEVICE=STM32F469xx
+STM32_SDK_DIR=../../../../..
+#　这个变量用来指定单片机芯片的型号，编译时传递给底层的hal文件
+DEVICE=STM32F407xx
+#　开发板的名称
+BOARD=stm32f407zgt-DIY
+# BOARD=STM32469I-Discovery
+
+BINDIR=bin
+INCDIR=inc 
+SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
 
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
@@ -12,12 +19,6 @@ OD=arm-none-eabi-objdump
 NM=arm-none-eabi-nm
 SIZE=arm-none-eabi-size
 A2L=arm-none-eabi-addr2line
-
-BINDIR=bin
-INCDIR=inc 
-SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
-
-
 
 # Find source files
 ASOURCES=$(shell find -L $(SRCDIR) -name '*.s')      #这个命令会递归的向下查找所有 .s .c .cpp文件，因此SRCDIR不要包含子目录
@@ -33,7 +34,7 @@ INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设�
 INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
 
 #------------------------------- BSP -------------------------------
-include $(STM32_SDK_DIR)/Drivers/BSP/STM32469I-Discovery/bsp.mk
+include $(STM32_SDK_DIR)/Drivers/BSP/$(BOARD)/bsp.mk
 INCLUDES+=$(BSP_INC) $(BSP_COMPONENTS_INC)
 CSOURCES+=$(BSP_SOURCES) $(BSP_COMPONENTS_SRC)
 
@@ -48,9 +49,9 @@ CSOURCES+=$(HAL_SOURCES)
 #INCLUDES+=$(FreeRTOS_INC)
 #CSOURCES+=$(FreeRTOS_SRC)
 
-include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
-INCLUDES+=$(FatFS_INC)
-CSOURCES+=$(FatFS_SRC)
+#include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
+#INCLUDES+=$(FatFS_INC)
+#CSOURCES+=$(FatFS_SRC)
 
 #######################################################################################
 # Find libraries

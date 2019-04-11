@@ -17,8 +17,6 @@ BINDIR=bin
 INCDIR=inc 
 SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
 
-
-
 # Find source files
 ASOURCES=$(shell find -L $(SRCDIR) -name '*.s')      #这个命令会递归的向下查找所有 .s .c .cpp文件，因此SRCDIR不要包含子目录
 CSOURCES=$(shell find -L $(SRCDIR) -name '*.c')
@@ -48,9 +46,9 @@ CSOURCES+=$(HAL_SOURCES)
 #INCLUDES+=$(FreeRTOS_INC)
 #CSOURCES+=$(FreeRTOS_SRC)
 
-include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
-INCLUDES+=$(FatFS_INC)
-CSOURCES+=$(FatFS_SRC)
+#include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
+#INCLUDES+=$(FatFS_INC)
+#CSOURCES+=$(FatFS_SRC)
 
 #######################################################################################
 # Find libraries
