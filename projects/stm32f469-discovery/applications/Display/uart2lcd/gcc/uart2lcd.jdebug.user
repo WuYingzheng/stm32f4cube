@@ -1,25 +1,32 @@
 
 Breakpoint=3078720026: 1673: 0, State=BP_STATE_ON
-Breakpoint=2169142727: 182: 0, State=BP_STATE_ON
-Breakpoint=2169142727: 185: 0, State=BP_STATE_ON
-Breakpoint=2169142727: 190: 0, State=BP_STATE_ON
-Breakpoint=2169142727: 191: 0, State=BP_STATE_ON
+Breakpoint=2169142727: 104: 0, State=BP_STATE_ON
+Breakpoint=2169142727: 106: 0, State=BP_STATE_ON
+Breakpoint=2169142727: 113: 5, State=BP_STATE_ON
+Breakpoint=2169142727: 115: 0, State=BP_STATE_ON
+Breakpoint=2169142727: 174: 0, State=BP_STATE_ON
+Breakpoint=2169142727: 179: 0, State=BP_STATE_ON
+Breakpoint=2169142727: 188: 0, State=BP_STATE_ON
 Breakpoint=2169142727: 192: 0, State=BP_STATE_ON
-OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/src/main.c", Line=174
-OpenDocument="stm32f4xx_hal_sd.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c", Line=638
-OpenDocument="stm32469i_discovery_lcd.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_lcd.c", Line=1641
-OpenDocument="startup_stm32f469xx.s", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/gcc/boot/startup_stm32f469xx.s", Line=67
-OpenDocument="stm32f4xx_hal.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c", Line=0
+OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/src/main.c", Line=182
+OpenDocument="startup_stm32f469xx.s", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/gcc/boot/startup_stm32f469xx.s", Line=65
+OpenDocument="stm32f4xx_hal_uart.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c", Line=2989
+OpenDocument="stm32f4xx_hal_sd.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c", Line=636
+OpenDocument="uart.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/src/uart.c", Line=0
+OpenDocument="stm32469i_discovery_lcd.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/BSP/STM32469I-Discovery/stm32469i_discovery_lcd.c", Line=764
+OpenDocument="stm32f4xx_hal.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c", Line=364
+OpenDocument="stm32f4xx_it.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/src/stm32f4xx_it.c", Line=136
 OpenToolbar="Debug", Floating=0, x=0, y=0
-OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=547, h=326, FilterBarShown=0, FilteredItems=[], RefreshRate=1
-OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=547, h=312, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=530, h=437, FilterBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=530, h=364, FilterBarShown=0, ExecCountersShown=0
 OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
-OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1478, h=288, FilterBarShown=0, EditorAddress=0x0
-OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=547, h=326, FilterBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=432, h=661, FilterBarShown=1
-OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=369, h=288, FilterBarShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1478, h=125, FilterBarShown=0, EditorAddress=0x0
+OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=530, h=437, FilterBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=86, h=824, FilterBarShown=1
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=369, h=125, FilterBarShown=0
 TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;259]
-TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[120;254;98;60]
+TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[120;254;98;58]
 TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[57;69;48;57;259]
 TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]
-WatchedExpression="console_handle"
+WatchedExpression="console_handle", RefreshRate=1
+WatchedExpression="aRxBuffer", RefreshRate=1

@@ -33,7 +33,7 @@ DSI_VidCfgTypeDef hdsivideo_handle;
 /* Internal Buffer defined in SDRAM memory */
 uint8_t *uwInternalBuffer;
 
-uint8_t aTxBuffer[] = " ****UART_TwoBoards_ComIT****  ****UART_TwoBoards_ComIT****  ****UART_TwoBoards_ComIT**** ";
+uint8_t aTxBuffer[] = " ****UART_TwoBoards_ComIT****  ****UART_TwoBoards_ComIT****  ****UART_TwoBoards_ComIT**** \n";
 
 uint8_t aRxBuffer[RXBUFFERSIZE];
 /* Private function prototypes -----------------------------------------------*/
@@ -73,16 +73,6 @@ int main(void)
   BSP_LED_Init(LED4);
   uartInit();
 
-  if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE)!= HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  
   /*##-1- Configure LCD ######################################################*/
   LCD_Config();  
   
@@ -107,7 +97,27 @@ int main(void)
         
       }
     }
-    
+
+//--------------------------------------------------
+  BSP_LCD_SetTextColor(LCD_COLOR_RED);
+  BSP_console_init();
+  BSP_LCD_printf("hello, world!\n");
+
+  if(HAL_UART_Transmit_IT(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE)!= HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
+  {
+    Error_Handler();
+  }else{
+    BSP_LCD_printf((uint8_t*)aRxBuffer);  
+  }
+
+  BSP_LCD_printf("hello, world!\n");
+
+//----------------------------------------------    
     /*##-4- Display Background picture #######################################*/
     /* Select Background Layer  */
     BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER_BACKGROUND);
@@ -176,19 +186,13 @@ int main(void)
   
   HAL_Delay(100);
   BSP_LCD_DisplayOn(); /*turn display On after background initialization */
-  BSP_LCD_SetTextColor(LCD_COLOR_RED);
-  BSP_console_init();
 
-  BSP_LCD_printf("hello, world!\n");
-
-  //BSP_LCD_DisplayStringAtLine(13, (uint8_t*)aRxBuffer);
-  //BSP_LCD_DisplayStringAtLine(14, (uint8_t*)"12345678901234567890123456789012345678901234567890123456789012345678901234567890");
-
+  BSP_LCD_printf((uint8_t*)aRxBuffer);  // 注意：打印必须有换行符刷新缓冲区，否则不会显示; uart中的接收函数也不会直接接收，好像有些延迟．
+  BSP_LCD_printf("\n");
   /* Infinite loop */
   while(1)
   { 
     counter = 0;
-    
     while (counter < ubNumberOfFiles)
     {
       /* Format the string */

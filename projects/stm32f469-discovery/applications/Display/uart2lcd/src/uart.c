@@ -27,4 +27,5 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle){
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle){
   /* Turn LED3 on: Transfer in reception process is correct */
   BSP_LED_On(LED3);
+  //BSP_LCD_printf("UART:Message reseved!\n");
 }
