@@ -1,6 +1,13 @@
-STM32_SDK_DIR=../../../../../..
-#　这个变量用来指定单片机的型号，编译时传递给底层的hal文件
-DEVICE=STM32F469xx
+STM32_SDK_DIR=../../../../..
+#　这个变量用来指定单片机芯片的型号，编译时传递给底层的hal文件
+DEVICE=STM32F407xx
+#　开发板的名称
+BOARD=stm32f407zgt-pro
+# BOARD=STM32469I-Discovery
+
+BINDIR=bin
+INCDIR=inc 
+SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
 
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
@@ -12,12 +19,6 @@ OD=arm-none-eabi-objdump
 NM=arm-none-eabi-nm
 SIZE=arm-none-eabi-size
 A2L=arm-none-eabi-addr2line
-
-BINDIR=bin
-INCDIR=inc 
-SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
-
-
 
 # Find source files
 ASOURCES=$(shell find -L $(SRCDIR) -name '*.s')      #这个命令会递归的向下查找所有 .s .c .cpp文件，因此SRCDIR不要包含子目录
@@ -33,7 +34,7 @@ INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设�
 INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
 
 #------------------------------- BSP -------------------------------
-include $(STM32_SDK_DIR)/Drivers/BSP/STM32469I-Discovery/bsp.mk
+include $(STM32_SDK_DIR)/Drivers/BSP/$(BOARD)/bsp.mk
 INCLUDES+=$(BSP_INC) $(BSP_COMPONENTS_INC)
 CSOURCES+=$(BSP_SOURCES) $(BSP_COMPONENTS_SRC)
 
@@ -48,9 +49,9 @@ CSOURCES+=$(HAL_SOURCES)
 #INCLUDES+=$(FreeRTOS_INC)
 #CSOURCES+=$(FreeRTOS_SRC)
 
-include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
-INCLUDES+=$(FatFS_INC)
-CSOURCES+=$(FatFS_SRC)
+#include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
+#INCLUDES+=$(FatFS_INC)
+#CSOURCES+=$(FatFS_SRC)
 
 #######################################################################################
 # Find libraries
@@ -73,7 +74,7 @@ DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
 CFLAGS=-c $(MCUFLAGS) $(INCLUDES) $(DEFS)  --specs=nano.specs
 CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
 # LINKER FLAGS
-LDSCRIPT=STM32F469NIHx_FLASH.ld
+LDSCRIPT=$(BOARD).ld
 LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) --specs=nosys.specs --specs=nano.specs $(INCLUDES_LIBS) $(LINK_LIBS)
 
 ###
@@ -141,7 +142,7 @@ clean:
 	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
 j-flash:debug
-	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/stm32f469_discovery_jlink.cfg\
+	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/$(BOARD).cfg\
 	 -c init \
 	 -c targets \
 	 -c "halt" \
@@ -159,4 +160,3 @@ st-flash: release
     -c "program bin/"$(BINELF)" verify reset" \
     -c "reset run"\
     -c "shutdown"
-
