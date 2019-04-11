@@ -197,9 +197,6 @@ int main(void)
   HAL_Delay(100);
   BSP_LCD_DisplayOn(); /*turn display On after background initialization */
   
-
-  BSP_LCD_SetTextColor(LCD_COLOR_RED);
-  BSP_LCD_DisplayStringAtLine(8, (uint8_t*)"hello world...      ");
   /* Infinite loop */
   while(1)
   { 
