@@ -1,7 +1,7 @@
 # STM32_SDK_DIR?=""
 STM32_SDK_DIR?=../../../..
 #　这个变量用来指定单片机的型号，编译时传递给底层的hal文件
-DEVICE=STM32F407xx
+DEVICE=STM32F407xx 
 
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
@@ -59,15 +59,16 @@ OBJECTS+=$(CXXSOURCES:%.cpp=%.o)
 # Define output files ELF & IHEX
 BINELF=outp.elf
 BINHEX=outp.hex
+BINARY=outp.bin
 
 # MCU FLAGS
 MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian \
 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb-interwork
 
 # 定义宏参数
-DEFS=-DUSE_STDPERIPH_DRIVER=" "
+DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
 # ！！！选项的顺序有很大的关系，不能随便改改
-CFLAGS=-c $(MCUFLAGS)  $(INCLUDES) -D$(DEVICE)=" " $(DEFS)
+CFLAGS=-c $(MCUFLAGS)  $(INCLUDES) $(DEFS)
 CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
 # LINKER FLAGS
 LDSCRIPT=STM32F407ZGT_FLASH.ld
@@ -101,11 +102,15 @@ release-memopt: CXXFLAGS+=-Os -fno-exceptions -ffunction-sections -fdata-section
 release-memopt: LDFLAGS+=-Os -Wl,-gc-sections --specs=nano.specs # -flto
 release-memopt: release
 
-release: $(BINDIR)/$(BINHEX)
+release: $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
 
 $(BINDIR)/$(BINHEX): $(BINDIR)/$(BINELF)
 	$(CP) -O ihex $< $@
 	@echo "Objcopy from ELF to IHEX complete!\n"
+
+$(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
+	$(CP) -S -O binary $< $@
+	@echo "Objcopy from ELF to BIN complete!\n"
 
 ##
 # C++ linking is used.

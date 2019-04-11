@@ -50,6 +50,7 @@ int main(void){
   BSP_LED_Init(LED0);
   BSP_LED_Init(LED1);
 
+  BSP_UARTx_Init(USART1,115200);
 
 }
 

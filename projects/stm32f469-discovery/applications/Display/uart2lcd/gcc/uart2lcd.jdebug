@@ -23,7 +23,7 @@ void OnProjectLoad (void) {
   //
   // User settings
   //
-  File.Open ("$(ProjectDir)/bin/outp.elf");
+  File.Open ("bin/outp.elf");
 }
 
 /*********************************************************************

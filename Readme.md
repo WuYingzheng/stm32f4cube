@@ -1,6 +1,7 @@
 # STM32CubeF4 MCU Firmware Package
 
 # env set up
+   * 激活jlink ==> JLinkLicenseManager add license.
    * cd $(STM32_SDK_DIR)
    * source SOURCEME
 

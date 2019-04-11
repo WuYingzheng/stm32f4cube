@@ -238,6 +238,25 @@
 /** @defgroup STM32469I-Discovery_LCD_Exported_Types STM32469I Discovery LCD Exported Types
   * @{
   */
+#define CONSOLE_HEIGHT 8
+#define CONSOLE_COL    30
+#define CONSOLE_START  12
+
+typedef struct
+{
+  uint8_t height;
+  uint8_t col;
+
+  uint8_t start;
+
+  // following variable should be protected
+  uint8_t b_head;
+  uint8_t b_tail;
+  uint8_t b_idx;
+  uint8_t buffer[CONSOLE_HEIGHT][CONSOLE_COL+1];
+} LCDConsole_HandleTypeDef;
+
+
 
 /**
 * @brief  LCD Drawing main properties
@@ -363,8 +382,9 @@ void     BSP_LCD_DisplayOff(void);
 void     BSP_LCD_DisplayOn(void);
 
 // add by wyz
-void BSP_console_init(void);
-uint8_t BSP_LCD_flush(uint8_t *Text);
+void     BSP_console_init(void);
+uint8_t BSP_LCD_flush(void *buf_in);
+void     BSP_LCD_printf(uint8_t *txt);
 /**
   * @}
   */

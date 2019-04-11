@@ -6,30 +6,9 @@
   *          mounted on STM32469I-Discovery evaluation board.
   ******************************************************************************
   * @attention
-  *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * 0.1 add LCD console, LCD_printf() ok!
+  * 
+  * !todo: 添加多线程锁保护；　加速stdlib.
   *
   ******************************************************************************
   */
@@ -1622,6 +1601,72 @@ static void LL_ConvertLineToARGB8888(void *pSrc, void *pDst, uint32_t xSize, uin
     }
   }
 }
+
+static LCDConsole_HandleTypeDef console_handle;
+
+void BSP_console_init(void){
+  console_handle.height=CONSOLE_HEIGHT;
+  console_handle.col=CONSOLE_COL;
+  console_handle.start=CONSOLE_START;
+
+  console_handle.b_head=0;
+  console_handle.b_tail=0;
+  console_handle.b_idx=0;
+  memset(console_handle.buffer,0,sizeof(console_handle.b_head));
+}
+
+static void pos2next(void){
+  console_handle.b_idx=0;
+  console_handle.b_tail++;
+  console_handle.b_tail= console_handle.b_tail==CONSOLE_HEIGHT? \
+                          0:console_handle.b_tail;
+  
+  if(console_handle.b_tail==console_handle.b_head){
+    console_handle.b_head++;
+    console_handle.b_head= console_handle.b_head==CONSOLE_HEIGHT? \
+                          0:console_handle.b_head;
+  }
+}
+
+void BSP_LCD_printf(uint8_t *txt){
+  
+  while(*txt!='\0'){
+    if(console_handle.b_idx==CONSOLE_COL){
+      console_handle.buffer[console_handle.b_tail][CONSOLE_COL]='\0';
+      pos2next();
+    }
+    if(*txt=='\n'){
+      console_handle.buffer[console_handle.b_tail][console_handle.b_idx]='\0';
+      pos2next();
+      BSP_LCD_flush(console_handle.buffer);
+    }else{
+      console_handle.buffer[console_handle.b_tail][console_handle.b_idx]=*txt;
+    
+      console_handle.b_idx++;
+    }
+    txt++;
+  }
+
+}
+
+uint8_t BSP_LCD_flush(void *buf_in){
+  uint8_t head=console_handle.b_head;
+  uint8_t tail=console_handle.b_tail;
+  uint8_t buf[CONSOLE_HEIGHT][CONSOLE_COL+1];
+
+  int i=0;
+
+  memcpy(buf,buf_in,sizeof(buf));
+  while(head!=tail){
+    BSP_LCD_ClearStringLine(console_handle.start+i);
+    BSP_LCD_DisplayStringAtLine(console_handle.start+i,buf[head]);
+    i++;
+    head++;
+    head=head==CONSOLE_HEIGHT? 0:head;
+  }
+}
+
+
 
 /**
   * @}

@@ -140,7 +140,7 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-j-flash:release
+j-flash:debug
 	openocd  -f board/stm32f469-jlink.cfg\
 	 -c init \
 	 -c targets \

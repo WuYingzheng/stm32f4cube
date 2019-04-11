@@ -42,9 +42,6 @@ static void SystemClock_Config(void);
 static void Error_Handler(void);
 static uint8_t LCD_Init(void);
 
-void BSP_LCD_flush(uint8_t *Text);
-void BSP_console_init(void);
-
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -180,12 +177,24 @@ int main(void)
   HAL_Delay(100);
   BSP_LCD_DisplayOn(); /*turn display On after background initialization */
   BSP_LCD_SetTextColor(LCD_COLOR_RED);
+  BSP_console_init();
   
-  
+  BSP_LCD_DisplayStringAtLine(11, (uint8_t*)"hello world...");
+  BSP_LCD_printf("hello\nhello\n");
 
-  BSP_LCD_DisplayChar(0,LINE(12),'a');
-//  BSP_LCD_DisplayStringAtLine(12, (uint8_t*)"hello world...\nhello      ");
-  BSP_LCD_DisplayStringAtLine(16, (uint8_t*)"hello world...\n      ");
+  BSP_LCD_printf("txt");
+  BSP_LCD_printf("1234567890123456789012345678901234567890??123");
+  BSP_LCD_printf("hello\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////next\n");
+
+  BSP_LCD_printf("1234567890123456789012345678901234567890////1\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////2\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////3\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////4\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////5\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////6\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////7\n");
+  BSP_LCD_printf("1234567890123456789012345678901234567890////8\n");
   //BSP_LCD_DisplayStringAtLine(13, (uint8_t*)aRxBuffer);
   //BSP_LCD_DisplayStringAtLine(14, (uint8_t*)"12345678901234567890123456789012345678901234567890123456789012345678901234567890");
 

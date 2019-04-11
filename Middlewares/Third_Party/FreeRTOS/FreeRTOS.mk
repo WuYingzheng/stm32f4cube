@@ -1,7 +1,7 @@
 # FreeRTOS Makefile
-FreeRTOS_INC_DIR= -I$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS            # RTOS
-FreeRTOS_INC_DIR+= -I$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/include
-FreeRTOS_INC_DIR+= -I$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
+FreeRTOS_INC= -I$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS            # RTOS
+FreeRTOS_INC+= -I$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/include
+FreeRTOS_INC+= -I$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F
 
 FreeRTOS_SRC=   $(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.c\
 			$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c\
