@@ -19,6 +19,7 @@ void uartInit(void){
     } 
 }
 
+// 这个会在传输完成时调用
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle){
   /* Turn LED1 on: Transfer in transmission process is correct */
   BSP_LED_On(LED1); 
@@ -27,5 +28,4 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle){
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle){
   /* Turn LED3 on: Transfer in reception process is correct */
   BSP_LED_On(LED3);
-  //BSP_LCD_printf("UART:Message reseved!\n");
 }

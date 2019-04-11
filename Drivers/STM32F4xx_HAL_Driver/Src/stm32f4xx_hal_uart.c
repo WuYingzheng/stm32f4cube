@@ -2127,7 +2127,7 @@ void HAL_UART_IRQHandler(UART_HandleTypeDef *huart)
     return;
   }
 
-  /* UART in mode Transmitter end --------------------------------------------*/
+  /* UART in mode Transmitter end 传输结束会调用回调函数　---------------------------------*/
   if (((isrflags & USART_SR_TC) != RESET) && ((cr1its & USART_CR1_TCIE) != RESET))
   {
     UART_EndTransmit_IT(huart);
@@ -2962,6 +2962,13 @@ static HAL_StatusTypeDef UART_EndTransmit_IT(UART_HandleTypeDef *huart)
 
 /**
   * @brief  Receives an amount of data in non blocking mode
+  *         该函数每调用一次接收一个字节        
+  * 
+  *         接收完句柄中指定的字节数后,该函数会关闭各种uart中断,
+  *         然后调用接收完成回调函数，否则回调函数不会被调用.
+  *         如果想要重新接收中断，需要显示调用中断接收函数：HAL_UART_Receive_IT()
+  *         重新接收指定uart上的中断.
+  * 
   * @param  huart  Pointer to a UART_HandleTypeDef structure that contains
   *                the configuration information for the specified UART module.
   * @retval HAL status
@@ -2971,7 +2978,7 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
   uint16_t *tmp;
 
   /* Check that a Rx process is ongoing */
-  if (huart->RxState == HAL_UART_STATE_BUSY_RX)
+  if (huart->RxState == HAL_UART_STATE_BUSY_RX) // 该状态由中断接收发起者设置，HAL_UART_Receive_IT()
   {
     if (huart->Init.WordLength == UART_WORDLENGTH_9B)
     {
@@ -2987,9 +2994,9 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
         huart->pRxBuffPtr += 1U;
       }
     }
-    else
+    else // 8bit模式
     {
-      if (huart->Init.Parity == UART_PARITY_NONE)
+      if (huart->Init.Parity == UART_PARITY_NONE) // 无校验
       {
         *huart->pRxBuffPtr++ = (uint8_t)(huart->Instance->DR & (uint8_t)0x00FF);
       }
@@ -2999,8 +3006,7 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
       }
     }
 
-    if (--huart->RxXferCount == 0U)
-    {
+    if (--huart->RxXferCount == 0U){
       /* Disable the UART Data Register not empty Interrupt */
       __HAL_UART_DISABLE_IT(huart, UART_IT_RXNE);
 
@@ -3017,7 +3023,7 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
       /*Call registered Rx complete callback*/
       huart->RxCpltCallback(huart);
 #else
-      /*Call legacy weak Rx complete callback*/
+      /*Call legacy weak Rx complete callback　接收结束调用接收回调函数*/
       HAL_UART_RxCpltCallback(huart);
 #endif /* USE_HAL_UART_REGISTER_CALLBACKS */
 
@@ -3025,7 +3031,7 @@ static HAL_StatusTypeDef UART_Receive_IT(UART_HandleTypeDef *huart)
     }
     return HAL_OK;
   }
-  else
+  else // 没有显示调用中断接收函数，设置uart句柄，因此设备可能正在处理其他事物;
   {
     return HAL_BUSY;
   }
