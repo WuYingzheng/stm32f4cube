@@ -42,14 +42,12 @@
      The following IPs are implied : DSI Host IP block working
      in conjunction to the LTDC controller.
    - This driver is linked by construction to LCD KoD mounted on board MB1166.
-
 2. Driver description:
 ---------------------
   + Initialization steps:
      o Initialize the LCD using the BSP_LCD_Init() function.
      o Select the LCD layer to be used using the BSP_LCD_SelectLayer() function.
      o Enable the LCD display using the BSP_LCD_DisplayOn() function.
-
   + Options
      o Configure and enable the color keying functionality using the
        BSP_LCD_SetColorKeying() function.
@@ -57,7 +55,6 @@
        using the following functions:
        - BSP_LCD_SetTransparency()
        - BSP_LCD_SetLayerAddress()
-
   + Display on LCD
      o Clear the whole LCD using BSP_LCD_Clear() function or only one specified string
        line using the BSP_LCD_ClearStringLine() function.
@@ -67,7 +64,6 @@
        using the BSP_LCD_DisplayStringAtLine() function.
      o Draw and fill a basic shapes (dot, line, rectangle, circle, ellipse, .. bitmap)
        on LCD using the available set of functions.
-
 ------------------------------------------------------------------------------*/
 
 /* Includes ------------------------------------------------------------------*/

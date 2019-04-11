@@ -362,6 +362,9 @@ void     BSP_LCD_FillEllipse(int Xpos, int Ypos, int XRadius, int YRadius);
 void     BSP_LCD_DisplayOff(void);
 void     BSP_LCD_DisplayOn(void);
 
+// add by wyz
+void BSP_console_init(void);
+uint8_t BSP_LCD_flush(uint8_t *Text);
 /**
   * @}
   */
