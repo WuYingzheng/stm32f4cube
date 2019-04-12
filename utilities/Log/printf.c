@@ -1,29 +1,25 @@
 /*
 * file printf.c
 */
-
-
 #include <stdarg.h>
 #include <string.h>
 #include "printf.h"
-
-
 
 /********************************************************************/
 
 typedef struct
 {
-    int dest;
+    int dest;            // 输出到控制台还是字符串
     void (*func)(char);
     char *loc;
 } PRINTK_INFO;
 
-int 
-printk (PRINTK_INFO *, const char *, va_list);
+int printk (PRINTK_INFO *, const char *, va_list);
 
 /********************************************************************/
-
+// 输出到控制台
 #define DEST_CONSOLE    (1)
+// 输出到字符串
 #define DEST_STRING     (2)
 
 #define FLAGS_MINUS     (0x01)
@@ -180,8 +176,7 @@ printk_pad_space (int curlen, int field_width, int *count, PRINTK_INFO *info)
 }
 
 /********************************************************************/
-int
-printk (PRINTK_INFO *info, const char *fmt, va_list ap)
+int printk (PRINTK_INFO *info, const char *fmt, va_list ap)
 {
     /* va_list ap; */
     char *p;
@@ -570,13 +565,10 @@ printk (PRINTK_INFO *info, const char *fmt, va_list ap)
 }
 
 /********************************************************************/
-int
-printf (const char *fmt, ...)
-{
+int printf (const char *fmt, ...){
     va_list ap;
     int rvalue;
     PRINTK_INFO info;
-
 
     info.dest = DEST_CONSOLE;
     info.func = &out_char;
@@ -593,8 +585,9 @@ printf (const char *fmt, ...)
 }
 
 /********************************************************************/
-int
-sprintf (char *s, const char *fmt, ...)
+// Write formatted data to string
+// 最后会附加一个空字符到字符串的结尾
+int sprintf (char *s, const char *fmt, ...)
 {
     va_list ap;
     int rvalue = 0;

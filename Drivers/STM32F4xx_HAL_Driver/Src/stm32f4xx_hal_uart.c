@@ -1009,6 +1009,7 @@ HAL_StatusTypeDef HAL_UART_UnRegisterCallback(UART_HandleTypeDef *huart, HAL_UAR
 
 /**
   * @brief  Sends an amount of data in blocking mode.
+  *         如果uart没有处于ready状态,则函数会立刻返回错误
   * @param  huart  Pointer to a UART_HandleTypeDef structure that contains
   *                the configuration information for the specified UART module.
   * @param  pData Pointer to data buffer
@@ -1030,7 +1031,7 @@ HAL_StatusTypeDef HAL_UART_Transmit(UART_HandleTypeDef *huart, uint8_t *pData, u
     }
 
     /* Process Locked */
-    __HAL_LOCK(huart);
+    __HAL_LOCK(huart);  // 把句柄中的lock改成locked,不成功函数将会直接返回busy
 
     huart->ErrorCode = HAL_UART_ERROR_NONE;
     huart->gState = HAL_UART_STATE_BUSY_TX;
