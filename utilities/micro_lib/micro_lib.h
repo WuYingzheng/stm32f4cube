@@ -125,9 +125,10 @@
 #ifndef __UTIL1_H
 #define __UTIL1_H
 
-#include "errorno.h"
+#include "errno.h"
 /* other includes needed */
-#include <type.h>
+//#include <type.h>
+#include "stm32f4xx.h" // 里面包含了一些数据类型
 #include <string.h>
 #include <stddef.h> /* for size_t */
 

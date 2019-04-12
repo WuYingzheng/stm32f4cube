@@ -53,6 +53,11 @@ CSOURCES+=$(HAL_SOURCES)
 #INCLUDES+=$(FatFS_INC)
 #CSOURCES+=$(FatFS_SRC)
 
+
+
+#--------------------------------------------------------------------------------------
+INCLUDES+=-I$(STM32_SDK_DIR)/utilities/micro_lib
+CSOURCES+=$(STM32_SDK_DIR)/utilities/micro_lib/micro_lib.c
 #######################################################################################
 # Find libraries
 INCLUDES_LIBS=-L$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Lib
@@ -122,6 +127,7 @@ $(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
 #   $(CC) $(OBJECTS) $(LDFLAGS) -o $@ if
 #   C linker is required.
 $(BINDIR)/$(BINELF): $(OBJECTS)
+	mkdir -p $(BINDIR)/
 	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
 	@echo "Linking complete!\n"
 	$(SIZE) $(BINDIR)/$(BINELF)

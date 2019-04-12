@@ -124,7 +124,7 @@
 
 /* MODULE UTIL1. */
 
-#include "utility.h"
+#include "micro_lib.h"
 #include <stdlib.h> /* for rand() */
 
 /* Internal method prototypes */

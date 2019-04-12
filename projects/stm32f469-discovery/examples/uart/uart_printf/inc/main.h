@@ -38,6 +38,7 @@
 #define __MAIN_H
 
 /* Includes ------------------------------------------------------------------*/
+#include "stdio.h"
 #include "stm32f4xx_hal.h"
 #include "stm32469i_discovery.h"
 

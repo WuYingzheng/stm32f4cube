@@ -38,8 +38,4 @@ sprintf(char *, const char *, ... );
 
 
 
-
-
-
-
 #endif

@@ -183,6 +183,19 @@ typedef enum
 } FunctionalState;
 #define IS_FUNCTIONAL_STATE(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
 
+#ifndef FALSE
+  #define  FALSE  0x00u  /* Boolean value FALSE. FALSE is defined always as a zero value. */
+#endif
+#ifndef TRUE
+  #define  TRUE   0x01u  /* Boolean value TRUE. TRUE is defined always as a non zero value. */
+#endif
+
+#ifndef __cplusplus
+  #ifndef bool
+typedef unsigned char           bool;
+  #endif
+#endif
+
 typedef enum
 {
   SUCCESS = 0U,
