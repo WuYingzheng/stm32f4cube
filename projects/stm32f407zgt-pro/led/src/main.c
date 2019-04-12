@@ -8,7 +8,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f407_DIY.h"
+#include "stm32f407zgt_pro.h"
 
 #include "stm32f4xx_hal_gpio.h"
 #include "stm32f4xx_hal_rcc.h"
@@ -47,22 +47,23 @@ int main(void){
   SystemClock_Config();
 
 // HAL库的开发方式
-/* 
+
   __HAL_RCC_GPIOF_CLK_ENABLE();
   GPIO_InitTypeDef  GPIO_InitStructure;
   GPIO_InitStructure.Pin = GPIO_PIN_9|GPIO_PIN_10;
   GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStructure.Speed = GPIO_SPEED_FAST;
-  GPIO_InitStructure.Pull = GPIO_PULLUP;;
+  GPIO_InitStructure.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStructure);
 
   HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_SET); // 关灯
   HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_RESET); // 开灯
   HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10);
-*/
 
-  BSP_LED_Init(LED0);
-  BSP_LED_Init(LED1);
+
+
+  //BSP_LED_Init(LED0);
+  //BSP_LED_Init(LED1);
 
   /* Configure EXTI Line0 (connected to PA0 pin) in interrupt mode */
 //  EXTILine0_Config();
