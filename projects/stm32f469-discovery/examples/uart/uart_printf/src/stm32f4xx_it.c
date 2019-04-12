@@ -1,9 +1,9 @@
 /**
   ******************************************************************************
-  * @file    UART/UART_Printf/Src/stm32f4xx_it.c
+  * @file    UART/UART_TwoBoards_ComPolling/Src/stm32f4xx_it.c 
   * @author  MCD Application Team
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and
+  *          This file provides template for all exceptions handler and 
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @attention
@@ -38,12 +38,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_it.h"
-
+   
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
   */
 
-/** @addtogroup UART_Printf
+/** @addtogroup UART_TwoBoards_ComPolling
   * @{
   */
 
@@ -153,7 +153,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-    HAL_IncTick();
+  HAL_IncTick();
 }
 
 /******************************************************************************/
@@ -162,6 +162,16 @@ void SysTick_Handler(void)
 /*  available peripheral interrupt handler's name please refer to the startup */
 /*  file (startup_stm32f4xx.s).                                               */
 /******************************************************************************/
+/**
+  * @brief  This function handles external line 0 interrupt request.
+  * @param  None
+  * @retval None
+  */
+void EXTI0_IRQHandler(void)
+{
+  HAL_GPIO_EXTI_IRQHandler(USER_BUTTON_PIN);
+}
+
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None
@@ -174,7 +184,7 @@ void SysTick_Handler(void)
 
 /**
   * @}
-  */
+  */ 
 
 /**
   * @}

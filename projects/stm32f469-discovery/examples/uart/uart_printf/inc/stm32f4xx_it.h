@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    UART/UART_Printf/Inc/stm32f4xx_it.h
+  * @file    UART/UART_TwoBoards_ComPolling/Inc/stm32f4xx_it.h 
   * @author  MCD Application Team
   * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
@@ -38,8 +38,8 @@
 #define __STM32F4xx_IT_H
 
 #ifdef __cplusplus
-extern "C" {
-#endif
+ extern "C" {
+#endif 
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -56,6 +56,8 @@ void SVC_Handler(void);
 void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
+void EXTI0_IRQHandler(void);
+
 #ifdef __cplusplus
 }
 #endif

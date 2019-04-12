@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file    UART/UART_Printf/Src/stm32f4xx_hal_msp.c
+  * @file    UART/UART_TwoBoards_ComPolling/Src/stm32f4xx_hal_msp.c
   * @author  MCD Application Team
-  * @brief   HAL MSP module.
+  * @brief   HAL MSP module.    
   ******************************************************************************
   * @attention
   *
@@ -30,8 +30,8 @@
   * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
-  ******************************************************************************
-  */
+  ******************************************************************************  
+  */ 
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -40,8 +40,7 @@
   * @{
   */
 
-/** @defgroup HAL_MSP
-  * @brief HAL MSP module.
+/** @defgroup UART_TwoBoards_ComPolling
   * @{
   */
 
@@ -57,18 +56,17 @@
   */
 
 /**
-  * @brief UART MSP Initialization
-  *        This function configures the hardware resources used in this example:
+  * @brief UART MSP Initialization 
+  *        This function configures the hardware resources used in this example: 
   *           - Peripheral's clock enable
-  *           - Peripheral's GPIO Configuration
+  *           - Peripheral's GPIO Configuration  
   * @param huart: UART handle pointer
   * @retval None
   */
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
-{
+{  
   GPIO_InitTypeDef  GPIO_InitStruct;
-
-
+  
   /*##-1- Enable peripherals and GPIO Clocks #################################*/
   /* Enable GPIO TX/RX clock */
   USARTx_TX_GPIO_CLK_ENABLE();
@@ -76,9 +74,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 
   /* Enable USARTx clock */
-  USARTx_CLK_ENABLE();
-
-  /*##-2- Configure peripheral GPIO ##########################################*/
+  USARTx_CLK_ENABLE(); 
+  
+  /*##-2- Configure peripheral GPIO ##########################################*/  
   /* UART TX GPIO pin configuration  */
   GPIO_InitStruct.Pin       = USARTx_TX_PIN;
   GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
@@ -96,10 +94,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 }
 
 /**
-  * @brief UART MSP De-Initialization
+  * @brief UART MSP De-Initialization 
   *        This function frees the hardware resources used in this example:
   *          - Disable the Peripheral's clock
-  *          - Revert GPIO and NVIC configuration to their default state
+  *          - Revert GPIO configuration to their default state
   * @param huart: UART handle pointer
   * @retval None
   */
@@ -110,11 +108,10 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
   USARTx_RELEASE_RESET();
 
   /*##-2- Disable peripherals and GPIO Clocks #################################*/
-  /* Configure UART Tx as alternate function  */
+  /* Configure USART6 Tx as alternate function  */
   HAL_GPIO_DeInit(USARTx_TX_GPIO_PORT, USARTx_TX_PIN);
-  /* Configure UART Rx as alternate function  */
+  /* Configure USART6 Rx as alternate function  */
   HAL_GPIO_DeInit(USARTx_RX_GPIO_PORT, USARTx_RX_PIN);
-
 }
 
 /**

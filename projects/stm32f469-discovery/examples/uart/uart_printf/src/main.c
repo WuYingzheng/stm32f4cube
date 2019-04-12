@@ -1,9 +1,11 @@
 /**
   ******************************************************************************
-  * @file    UART/UART_Printf/Src/main.c
+  * @file    UART/UART_TwoBoards_ComPolling/Src/main.c 
   * @author  MCD Application Team
-  * @brief   This example shows how to retarget the C library printf function
-  *          to the UART.
+  * @brief   This sample code shows how to use UART HAL API to transmit
+  *          and receive a data buffer with a communication process based on
+  *          polling transfer. 
+  *          The communication is done using 2 Boards.
   ******************************************************************************
   * @attention
   *
@@ -41,18 +43,31 @@
   * @{
   */
 
-/** @addtogroup UART_Printf
+/** @addtogroup UART_TwoBoards_ComPolling
   * @{
-  */
+  */ 
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define TRANSMITTER_BOARD
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
 UART_HandleTypeDef UartHandle;
+__IO uint32_t UserButtonStatus = 0;  /* set to 1 after User Button interrupt  */
+
+/* Buffer used for transmission */
+uint8_t aTxBuffer[] = " **** UART_TwoBoards_ComPolling ****  **** UART_TwoBoards_ComPolling ****  **** UART_TwoBoards_ComPolling **** ";
+
+/* Buffer used for reception */
+uint8_t aRxBuffer[RXBUFFERSIZE];
 
 /* Private function prototypes -----------------------------------------------*/
+static void SystemClock_Config(void);
+static void Error_Handler(void);
+static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
+
 #ifdef __GNUC__
 /* With GCC, small printf (option LD Linker->Libraries->Small printf
    set to 'Yes') calls __io_putchar() */
@@ -60,8 +75,6 @@ UART_HandleTypeDef UartHandle;
 #else
 #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
 #endif /* __GNUC__ */
-static void SystemClock_Config(void);
-static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -86,38 +99,107 @@ int main(void)
 
   /* Configure the system clock to 180 MHz */
   SystemClock_Config();
-
-  /* Initialize BSP Led for LED3 */
+  
+  /* Configure LED1, LED2, LED3 and LED4 */
+  BSP_LED_Init(LED1);
+  BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
+  BSP_LED_Init(LED4);
 
   /*##-1- Configure the UART peripheral ######################################*/
   /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
   /* UART configured as follows:
-      - Word Length = 8 Bits (7 data bit + 1 parity bit) : 
-     BE CAREFUL : Program 7 data bits + 1 parity bit in PC HyperTerminal
-      - Stop Bit    = One Stop bit
-      - Parity      = ODD parity
-      - BaudRate    = 9600 baud
+      - Word Length = 8 Bits
+      - Stop Bit = One Stop bit
+      - Parity = None
+      - BaudRate = 9600 baud
       - Hardware flow control disabled (RTS and CTS signals) */
   UartHandle.Instance        = USARTx;
 
-  UartHandle.Init.BaudRate   = 9600;
-  UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits   = UART_STOPBITS_1;
-  UartHandle.Init.Parity     = UART_PARITY_ODD;
-  UartHandle.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode       = UART_MODE_TX_RX;
+  UartHandle.Init.BaudRate     = 9600;
+  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
+  UartHandle.Init.StopBits     = UART_STOPBITS_1;
+  UartHandle.Init.Parity       = UART_PARITY_NONE;
+  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
+  UartHandle.Init.Mode         = UART_MODE_TX_RX;
   UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&UartHandle) != HAL_OK)
+
+  if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
   {
-    /* Initialization Error */
+    Error_Handler();
+  }  
+  if(HAL_UART_Init(&UartHandle) != HAL_OK)
+  {
     Error_Handler();
   }
+  
+#ifdef TRANSMITTER_BOARD
 
-  /* Output a message on Hyperterminal using printf function */
+  /* Configure User push-button in Interrupt mode */
+  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
+  
+  /* Wait for User push-button press before starting the Communication.
+     In the meantime, LED2 is blinking */
+  while(UserButtonStatus == 0)
+  {
+      /* Toggle LED2*/
+      BSP_LED_Toggle(LED2); 
+      HAL_Delay(100);
+  }
+  
+  BSP_LED_Off(LED2); 
+  /* The board sends the message and expects to receive it back */
+  
+  /*##-2- Start the transmission process #####################################*/  
+  /* While the UART in reception process, user can transmit data through 
+     "aTxBuffer" buffer */
+  if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE, 5000)!= HAL_OK)
+  {
+    Error_Handler();   
+  }
+  
+  /* Turn LED4 on: Transfer in transmission process is correct */
+  BSP_LED_On(LED4);
+  
+  /*##-3- Put UART peripheral in reception process ###########################*/  
+  if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 5000) != HAL_OK)
+  {
+    Error_Handler();  
+  }
+   
+  /* Turn LED3 on: Transfer in reception process is correct */
+  BSP_LED_On(LED3);
+ 
+#else
+  
+  /* The board receives the message and sends it back */
+
+  /*##-2- Put UART peripheral in reception process ###########################*/
+  if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 0x1FFFFFF) != HAL_OK)
+  {
+    Error_Handler();
+  }
+ 
+  /* Turn LED3 on: Transfer in reception process is correct */
+  BSP_LED_On(LED3);
+  
+  /*##-3- Start the transmission process #####################################*/  
+  /* While the UART in reception process, user can transmit data through 
+     "aTxBuffer" buffer */
+  if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE, 5000)!= HAL_OK)
+  {
+    Error_Handler();
+  }
+  
+  /* Turn LED4 on: Transfer in transmission process is correct */
+  BSP_LED_On(LED4);
+  
+#endif /* TRANSMITTER_BOARD */
+
   printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
   printf("** Test finished successfully. ** \n\r");
 
+   
   /* Infinite loop */
   while (1)
   {
@@ -147,11 +229,12 @@ PUTCHAR_PROTOTYPE
   *            AHB Prescaler                  = 1
   *            APB1 Prescaler                 = 4
   *            APB2 Prescaler                 = 2
-  *            HSE Frequency(Hz)              = 25000000
-  *            PLL_M                          = 25
+  *            HSE Frequency(Hz)              = 8000000
+  *            PLL_M                          = 8
   *            PLL_N                          = 360
   *            PLL_P                          = 2
   *            PLL_Q                          = 7
+  *            PLL_R                          = 6
   *            VDD(V)                         = 3.3
   *            Main regulator output voltage  = Scale1 mode
   *            Flash Latency(WS)              = 5
@@ -177,11 +260,15 @@ static void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+#if defined(USE_STM32469I_DISCO_REVA)
   RCC_OscInitStruct.PLL.PLLM = 25;
+#else
+  RCC_OscInitStruct.PLL.PLLM = 8;
+#endif /* USE_STM32469I_DISCO_REVA */
   RCC_OscInitStruct.PLL.PLLN = 360;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
-  RCC_OscInitStruct.PLL.PLLR = 2;
+  RCC_OscInitStruct.PLL.PLLR = 6;
   
   ret = HAL_RCC_OscConfig(&RCC_OscInitStruct);
   if(ret != HAL_OK)
@@ -211,20 +298,69 @@ static void SystemClock_Config(void)
 }
 
 /**
+  * @brief  UART error callbacks
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report transfer error, and you can
+  *         add your own implementation.
+  * @retval None
+  */
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
+{
+  /* Turn LED1 on: Transfer error in reception/transmission process */
+  BSP_LED_On(LED1); 
+}
+
+
+/**
+  * @brief EXTI line detection callbacks
+  * @param GPIO_Pin: Specifies the pins connected EXTI line
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if(GPIO_Pin == USER_BUTTON_PIN)
+  {  
+    UserButtonStatus = 1;
+  }
+}
+/**
+  * @brief  Compares two buffers.
+  * @param  pBuffer1, pBuffer2: buffers to be compared.
+  * @param  BufferLength: buffer's length
+  * @retval 0  : pBuffer1 identical to pBuffer2
+  *         >0 : pBuffer1 differs from pBuffer2
+  */
+static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength)
+{
+  while (BufferLength--)
+  {
+    if ((*pBuffer1) != *pBuffer2)
+    {
+      return BufferLength;
+    }
+    pBuffer1++;
+    pBuffer2++;
+  }
+
+  return 0;
+}
+
+/**
   * @brief  This function is executed in case of error occurrence.
   * @param  None
   * @retval None
   */
 static void Error_Handler(void)
 {
-  /* Turn LED3 on */
-  BSP_LED_On(LED3);
-  while (1)
+  /* Turn LED1 on */
+  BSP_LED_On(LED1);
+  while(1)
   {
   }
 }
 
 #ifdef  USE_FULL_ASSERT
+
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -232,8 +368,8 @@ static void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
-{
+void assert_failed(uint8_t* file, uint32_t line)
+{ 
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
@@ -243,6 +379,7 @@ void assert_failed(uint8_t *file, uint32_t line)
   }
 }
 #endif
+
 
 /**
   * @}

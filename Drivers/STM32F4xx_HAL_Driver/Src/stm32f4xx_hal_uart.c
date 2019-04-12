@@ -1994,6 +1994,10 @@ HAL_StatusTypeDef HAL_UART_AbortReceive_IT(UART_HandleTypeDef *huart)
 
 /**
   * @brief  This function handles UART interrupt request.
+  *         首先处理数据接收；
+  *         随后处理错误
+  *         最后处理发送        
+  * 
   * @param  huart  Pointer to a UART_HandleTypeDef structure that contains
   *                the configuration information for the specified UART module.
   * @retval None
