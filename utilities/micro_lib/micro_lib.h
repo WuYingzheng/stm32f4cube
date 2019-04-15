@@ -137,6 +137,17 @@
 extern "C" {
 #endif
 
+/* Exported macro ------------------------------------------------------------*/
+#define IS_CAP_LETTER(c)    (((c) >= 'A') && ((c) <= 'F'))
+#define IS_LC_LETTER(c)     (((c) >= 'a') && ((c) <= 'f'))
+#define IS_09(c)            (((c) >= '0') && ((c) <= '9'))
+#define ISVALIDHEX(c)       (IS_CAP_LETTER(c) || IS_LC_LETTER(c) || IS_09(c))
+#define ISVALIDDEC(c)       IS_09(c)
+#define CONVERTDEC(c)       (c - '0')
+
+#define CONVERTHEX_ALPHA(c) (IS_CAP_LETTER(c) ? ((c) - 'A'+10) : ((c) - 'a'+10))
+#define CONVERTHEX(c)       (IS_09(c) ? ((c) - '0') : CONVERTHEX_ALPHA(c))
+
 typedef enum {
   UTIL1_SEP_NUM_TYPE_UINT8, /* uint8_t number type */
   UTIL1_SEP_NUM_TYPE_UINT8_HEX_NO_PREFIX /* uint8_t hex number type, no 0x prefix */
@@ -496,6 +507,8 @@ uint8_t UTIL1_ReadEscapedName(const unsigned char *filename, uint8_t *destname, 
 */
 
 uint8_t UTIL1_xatoi(const unsigned char **str, int32_t *res);
+
+uint32_t UTIL1_atoi(uint8_t *p_inputstr, uint32_t *p_intnum);
 /*
 ** ===================================================================
 **     Method      :  UTIL1_xatoi (component Utility)

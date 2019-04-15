@@ -618,16 +618,13 @@ int  puts(const char * s)
 
 /********************************************************************/
 //********************************************************************/
-char
-
-in_char (void)
+char in_char (void)
 {
 	return UART_GetChar(COM_PORT);
 }
 /********************************************************************/
 
-void
-out_char (char ch)
+void out_char (char ch)
 {
 	UART_PutChar(COM_PORT, ch);
 }
