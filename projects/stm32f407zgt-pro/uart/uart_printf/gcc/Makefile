@@ -151,13 +151,12 @@ j-flash:debug
 	 -c "reset run" \
 	 -c shutdown
 
-flash: $(BINDIR)/$(BINELF)
-	openocd -f  interface/jlink.cfg -f target/stm32f4x.cfg\
+st-flash: release
+	openocd -f  board/stm32f429discovery.cfg\
     -c "init" \
     -c "reset init" \
+    -c "flash probe 0"\
     -c "flash info 0"\
     -c "program bin/"$(BINELF)" verify reset" \
     -c "reset run"\
     -c "shutdown"
-
-

@@ -7,30 +7,6 @@
   * @author  MCD Application Team
   * @brief   Description of the UART Printf example.
   ******************************************************************************
-  *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
   @endverbatim
 
 @par Example Description 
@@ -38,16 +14,16 @@
 This example shows how to re-route the C library printf function to the UART.
 The UART outputs a message on the HyperTerminal.
 
-Board: STM32469I-EVAL
-Tx Pin: PA.09
-Rx Pin: PA.10
+Board: stm32f407zgt-pro
+Tx Pin: PA.02
+Rx Pin: PA.03
    _________________________ 
   |           ______________|                       _______________
   |          |USART         |                      | HyperTerminal |
   |          |              |                      |               |
   |          |           TX |______________________|RX             |
   |          |              |                      |               |
-  |          |              |     RS232 Cable      |               |             
+  |          |              |     ttl Cable      |               |             
   |          |              |                      |               |
   |          |           RX |______________________|TX             |          
   |          |              |                      |               |           
@@ -63,9 +39,33 @@ The USART is configured as follows:
     - BaudRate = 9600 baud  
     - Word Length = 8 Bits (7 data bit + 1 parity bit)
     - One Stop Bit
-    - Odd parity
+    - no parity
     - Hardware flow control disabled (RTS and CTS signals)
     - Reception and transmission are enabled in the time
+
+一旦uart配置完成，需要考虑将printf()重定向到串口;本例程实现了gcc编译器下的移植；
+  移植的关键代码如下：
+  #ifdef __GNUC__
+  
+  int _write(int file, char *data, int len){
+   if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
+   {
+      errno = EBADF;
+      return -1;
+   }
+
+   // arbitrary timeout 1000
+   HAL_StatusTypeDef status =
+      HAL_UART_Transmit(&UartHandle, (uint8_t*)data, len, 1000);
+
+   // return # of bytes written - as best we can tell
+   return (status == HAL_OK ? len : 0);
+  }
+
+  #endif /* __GNUC__ */
+
+  重定义标准库中的_write()函数，将写入标准输出与标准错误的函数重定向到串口；
+
 
 @note USARTx/UARTx instance used and associated resources can be updated in "main.h"
 file depending hardware configuration used.
@@ -98,33 +98,25 @@ position of the transmitted data.
 
 @par Hardware and Software environment
 
-  - This example runs on STM32F469xx/STM32F479xx devices.
+  - This example runs on stm32f407zgt-pro devices.
 
-  - This example has been tested and validated with STMicroelectronics STM32469I-EVAL RevC board and can be
-    easily tailored to any other supported device and development board.    
+  - 本历程已经在stm32f407zgt-pro开发板上测试通过，实验前先按照前面的连线方式连线;   
 
-  - TARGET_STM32469I_EVAL Set-up
-  - Connect a null-modem female/female RS232 cable between the DB9 connector CN7 (USART1) 
-  and PC serial port on which you want to display data on the HyperTerminal.
-  @note Make sure that :
-    - jumper JP8  is on RS232_RX position (1-2)  and 
-    - jumper JP15 is on USART1_RX position 1-2)and 
-    - jumper JP19 is on USART1_TX position (1-2).      
+  - 编译：make
+    烧录：make j-flash
+    调试：Ozone uart.jdebug 
 
   - Hyperterminal configuration:
-    - Data Length = 7 Bits
+    - Data Length = 8 Bits
     - One Stop Bit
-    - Odd parity
+    - no parity
     - BaudRate = 9600 baud
     - Flow control: None 
 
-@par How to use it ? 
-
-In order to make the program work, you must do the following :
- - Open your preferred toolchain 
- - Rebuild all files and load your image into target memory
- - Run the example
-
+@par 实验现象 ? 
+  上电后开发板的led1会闪烁；
+  按下开发板上的key1，led1会熄灭，开始执行printf()
+  如果串口的连线正确，超级中断中出现"hello"字样；
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

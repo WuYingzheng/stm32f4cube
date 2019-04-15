@@ -12,18 +12,18 @@ void OnProjectLoad (void) {
   //
   // Dialog-generated settings
   //
-  Project.SetDevice ("STM32F469NI");
+  Project.SetDevice ("STM32F407ZG");
   Project.SetHostIF ("USB", "");
-  Project.SetTargetIF ("SWD");
+  Project.SetTargetIF ("JTAG");
   Project.SetTIFSpeed ("1 MHz");
   Project.AddSvdFile ("$(InstallDir)/Config/CPU/Cortex-M4F.svd");
   Project.AddSvdFile ("$(InstallDir)/Config/Peripherals/ARMv7M.svd");
-  Project.AddPathSubstitute ("/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f469-discovery/applications/Display/uart2lcd/gcc", "$(ProjectDir)");
-  Project.AddPathSubstitute ("/home/wyz/desktop/stm32f469/stm32cubef4/projects/stm32f469-discovery/applications/display/uart2lcd/gcc", "$(ProjectDir)");
+  Project.AddPathSubstitute ("/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/uart/uart_it/gcc", "$(ProjectDir)");
+  Project.AddPathSubstitute ("/home/wyz/desktop/stm32f469/stm32cubef4/projects/stm32f407zgt-pro/uart/uart_it/gcc", "$(ProjectDir)");
   //
   // User settings
   //
-  File.Open ("bin/outp.elf");
+  File.Open ("$(ProjectDir)/bin/outp.elf");
 }
 
 /*********************************************************************
