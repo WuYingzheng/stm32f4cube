@@ -11,6 +11,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "stdio.h"
+#include  <sys/unistd.h>
+#include  <errno.h> 
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -22,7 +25,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-//#define TRANSMITTER_BOARD
+
+#define TRANSMITTER_BOARD
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -42,6 +46,7 @@ static void Error_Handler(void);
 static uint16_t Buffercmp(uint8_t* pBuffer1, uint8_t* pBuffer2, uint16_t BufferLength);
 
 /* Private functions ---------------------------------------------------------*/
+
 
 /**
   * @brief  Main program
@@ -90,23 +95,23 @@ int main(void)
   
 #ifdef TRANSMITTER_BOARD
   /* Configure USER Button */
-  BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_GPIO);
+  BSP_BUTTON_Init(BUTTON0, BUTTON_MODE_GPIO);
 	
   /* Wait for USER Button press before starting the Communication */
-  while (BSP_PB_GetState(BUTTON_KEY) == RESET)
+  while (BSP_BUTTON_GetState(BUTTON0) == RESET)
   {
     /* Toggle LED3 waiting for user to press button */
-    BSP_LED_Toggle(LED3);
+    BSP_LED_Toggle(LED1);
     HAL_Delay(40);		
   }
   
   /* Wait for USER Button release before starting the Communication */
-  while (BSP_PB_GetState(BUTTON_KEY) == SET)
+  while (BSP_BUTTON_GetState(BUTTON0) == SET)
   {
   }
   
   /* Turn LED3 off */
-  BSP_LED_Off(LED3);
+  BSP_LED_Off(LED1);
   
   /* The board sends the message and expects to receive it back */
   
@@ -127,10 +132,10 @@ int main(void)
   UartReady = RESET;
   
   /*##-4- Put UART peripheral in reception process ###########################*/  
-  if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
-  {
-    Error_Handler();
-  }
+//  if(HAL_UART_Receive_IT(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE) != HAL_OK)
+//  {
+//    Error_Handler();
+//  }
 
 #else
   
@@ -168,12 +173,6 @@ int main(void)
   /* Reset transmission flag */
   UartReady = RESET;
 
-  /*##-6- Compare the sent and received buffers ##############################*/
-  if(Buffercmp((uint8_t*)aTxBuffer,(uint8_t*)aRxBuffer,RXBUFFERSIZE))
-  {
-    Error_Handler();
-  }
-  
   /* Infinite loop */
   while (1)
   {
@@ -286,8 +285,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
   *         add your own implementation.
   * @retval None
   */
- void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle)
-{
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *UartHandle){
   /* Turn LED3 on: Transfer error in reception/transmission process */
   BSP_LED_On(LED0); 
 }

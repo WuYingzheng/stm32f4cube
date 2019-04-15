@@ -18,8 +18,8 @@ void OnProjectLoad (void) {
   Project.SetTIFSpeed ("1 MHz");
   Project.AddSvdFile ("$(InstallDir)/Config/CPU/Cortex-M4F.svd");
   Project.AddSvdFile ("$(InstallDir)/Config/Peripherals/ARMv7M.svd");
-  Project.AddPathSubstitute ("/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-DIY/key/gcc", "$(ProjectDir)");
-  Project.AddPathSubstitute ("/home/wyz/desktop/stm32f469/stm32cubef4/projects/stm32f407zgt-diy/key/gcc", "$(ProjectDir)");
+  Project.AddPathSubstitute ("/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/uart/uart_it/gcc", "$(ProjectDir)");
+  Project.AddPathSubstitute ("/home/wyz/desktop/stm32f469/stm32cubef4/projects/stm32f407zgt-pro/uart/uart_it/gcc", "$(ProjectDir)");
   //
   // User settings
   //
