@@ -27,4 +27,6 @@ HAL_SOURCES=$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c\
 	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c\
 	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c\
 	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai.c\
-	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai_ex.c
+	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sai_ex.c\
+	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c\
+	$(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c
