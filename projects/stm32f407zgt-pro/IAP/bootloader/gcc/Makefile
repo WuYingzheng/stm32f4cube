@@ -1,7 +1,14 @@
 # STM32_SDK_DIR?=""
 STM32_SDK_DIR?=../../../../..
-#　这个变量用来指定单片机的型号，编译时传递给底层的hal文件
+#　这个变量用来指定单片机芯片的型号，编译时传递给底层的hal文件
 DEVICE=STM32F407xx
+#　开发板的名称
+BOARD=stm32f407zgt-pro
+# BOARD=STM32469I-Discovery
+
+BINDIR=bin
+INCDIR=inc 
+SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
 
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
@@ -14,48 +21,62 @@ NM=arm-none-eabi-nm
 SIZE=arm-none-eabi-size
 A2L=arm-none-eabi-addr2line
 
-######################## 1.注意不要将子目录添加到变量中 
-######################## 2.不要将第三方库目录添加在这里
-BINDIR=bin
-#INCDIR=inc 
-SRCDIR=boot ../src
-
 # Find source files
 ASOURCES=$(shell find -L $(SRCDIR) -name '*.s')      #这个命令会递归的向下查找所有 .s .c .cpp文件，因此SRCDIR不要包含子目录
 CSOURCES=$(shell find -L $(SRCDIR) -name '*.c')
 CXXSOURCES=$(shell find -L $(SRCDIR) -name '*.cpp')
 # Find header directories
-#INC=$(shell find -L $(INCDIR) -name '*.h' -exec dirname {} \; | uniq)    # 这个命令非常智能，只要添加根目录，可以找出所有包含.h的目录
-#INCLUDES=$(INC:%=-I%)
+INC=$(shell find -L $(INCDIR) -name '*.h' -exec dirname {} \; | uniq)    # 这个命令非常智能，只要添加根目录，可以找出所有包含.h的目录
+INCLUDES=$(INC:%=-I%)
 
 INCLUDES+= -I../inc/
 INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Core/Include/                 # 内核以及内核外设相关的头文件
-INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设备底层寄存器访问接口 
+INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设备底层寄存器访问接口
 INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
 
-include subMake/bsp.mk
-#CSOURCES+=$(shell find -L $(BSP_COMPONENTS_DIR) -name '*.c')
+#------------------------------- BSP -------------------------------
+include $(STM32_SDK_DIR)/Drivers/BSP/$(BOARD)/bsp.mk
 INCLUDES+=$(BSP_INC) $(BSP_COMPONENTS_INC)
 CSOURCES+=$(BSP_SOURCES) $(BSP_COMPONENTS_SRC)
 
-# 如果编译时显示Hal库中的变量未定义，请在stm32fxx_hal_conf.h中进行配置
-include subMake/stm32_hal.mk
+#------------------------------- HAL -------------------------------
+include $(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.mk
 INCLUDES+=$(HAL_INC)
 CSOURCES+=$(HAL_SOURCES)
 
-################################## ADD YOUR CONPONENTS HERE ###############################
+################################## ADD YOUR CONPONENTS HERE ###########################
 #FreeRTOS_PATH=$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source
 #include $(FreeRTOS_PATH)/Makefile
-#INCLUDES+=$(FreeRTOS_INC_DIR)
+#INCLUDES+=$(FreeRTOS_INC)
 #CSOURCES+=$(FreeRTOS_SRC)
 
-########################### Find libraries
+#include $(STM32_SDK_DIR)/Middlewares/Third_Party/FatFs/FatFS.mk
+#INCLUDES+=$(FatFS_INC)
+#CSOURCES+=$(FatFS_SRC)
+
+# add this source so that you can re-target printf to uart
+# note! if you want printf() to work, you need re-define  ＇UART_HandleTypeDef UART_LOG_Handle＇
+# in you program, then initialize it.
+CSOURCES+=$(STM32_SDK_DIR)/utilities/Log/uart_log.c
+
+# if you want to link micro-lib to your program, please add this the following
+# components. micro-lib includes some functions which is already in the stdlib,
+# but have a faster speed, as well as some useful tools.
+INCLUDES+=-I$(STM32_SDK_DIR)/utilities/micro_lib/ 
+CSOURCES+=$(STM32_SDK_DIR)/utilities/micro_lib/micro_lib.c
+
+#######################################################################################
+# Find libraries
 INCLUDES_LIBS=-L$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Lib
 LINK_LIBS=-lPDMFilter_CM4_GCC_wc32
+
 # Create object list
 OBJECTS=$(ASOURCES:%.s=%.o)
 OBJECTS+=$(CSOURCES:%.c=%.o)
 OBJECTS+=$(CXXSOURCES:%.cpp=%.o)
+# Create dependent file
+DEPENDENT:=$(patsubst %c,%d,$(CSOURCES))
+DEPENDENT+=$(patsubst %cpp,%d,$(CXXSOURCES))
 # Define output files ELF & IHEX
 BINELF=outp.elf
 BINHEX=outp.hex
@@ -65,14 +86,12 @@ BINARY=outp.bin
 MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian \
 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb-interwork
 
-# 定义宏参数
-DEFS=-DUSE_STDPERIPH_DRIVER=" "
-# ！！！选项的顺序有很大的关系，不能随便改改
-CFLAGS=-c $(MCUFLAGS)  $(INCLUDES) -D$(DEVICE)=" " $(DEFS)
+DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
+CFLAGS=-c $(MCUFLAGS) $(INCLUDES) $(DEFS)  --specs=nano.specs
 CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
 # LINKER FLAGS
-LDSCRIPT=STM32F407ZGT_FLASH.ld
-LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) --specs=nosys.specs $(INCLUDES_LIBS) $(LINK_LIBS)
+LDSCRIPT=$(BOARD).ld
+LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) --specs=nosys.specs --specs=nano.specs $(INCLUDES_LIBS) $(LINK_LIBS)
 
 ###
 # Build Rules
@@ -83,7 +102,7 @@ debug: CXXFLAGS+=-g
 debug: LDFLAGS+=-g
 debug: release
 
-all: release-memopt 
+all: release-memopt
 
 release-memopt-blame: CFLAGS+=-g
 release-memopt-blame: CXXFLAGS+=-g
@@ -102,7 +121,7 @@ release-memopt: CXXFLAGS+=-Os -fno-exceptions -ffunction-sections -fdata-section
 release-memopt: LDFLAGS+=-Os -Wl,-gc-sections --specs=nano.specs # -flto
 release-memopt: release
 
-release: $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
+release:  $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
 
 $(BINDIR)/$(BINHEX): $(BINDIR)/$(BINELF)
 	$(CP) -O ihex $< $@
@@ -111,7 +130,6 @@ $(BINDIR)/$(BINHEX): $(BINDIR)/$(BINELF)
 $(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
 	$(CP) -S -O binary $< $@
 	@echo "Objcopy from ELF to BIN complete!\n"
-
 ##
 # C++ linking is used.
 #
@@ -119,40 +137,46 @@ $(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
 #   $(CXX) $(OBJECTS) $(LDFLAGS) -o $@ to 
 #   $(CC) $(OBJECTS) $(LDFLAGS) -o $@ if
 #   C linker is required.
-$(BINDIR)/$(BINELF): check $(OBJECTS) 
-	@mkdir -p $(BINDIR)
-	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
+$(BINDIR)/$(BINELF): $(OBJECTS)
+	mkdir -p $(@D)
+	$(CXX) $(LDFLAGS) $^ -o $@
 	@echo "Linking complete!\n"
 	$(SIZE) $(BINDIR)/$(BINELF)
 
+# Include all .d files
+-include $(DEPENDENT)
+
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) -MMD $< -o $@
 	@echo "Compiled "$<"!\n"
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -MMD $< -o $@
 	@echo "Compiled "$<"!\n"
 
 %.o: %.s
 	$(CC) $(CFLAGS) $< -o $@
 	@echo "Assambled "$<"!\n"
 
-check:
-ifeq ($(STM32_SDK_DIR),"")#　注意ifeq后面留一个空格
-	@echo "NOTE:: STM32_SDK_DIR was not set, please source the environment first!"
-else 
-	@echo ">> Building this project ...\n"
-endif
-
 clean:
-	rm -f $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
+	rm -f $(DEPENDENT) $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-flash: $(BINDIR)/$(BINELF)
-	openocd -f  interface/jlink.cfg -f target/stm32f4x.cfg\
+j-flash:debug
+	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/$(BOARD).cfg\
+	 -c init \
+	 -c targets \
+	 -c "halt" \
+	 -c "flash write_image erase bin/$(BINELF)" \
+	 -c "verify_image bin/outp.elf" \
+	 -c "reset run" \
+	 -c shutdown
+
+st-flash: release
+	openocd -f  board/stm32f429discovery.cfg\
     -c "init" \
     -c "reset init" \
+    -c "flash probe 0"\
     -c "flash info 0"\
     -c "program bin/"$(BINELF)" verify reset" \
     -c "reset run"\
     -c "shutdown"
-

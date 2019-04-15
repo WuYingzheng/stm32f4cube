@@ -8,9 +8,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f407_DIY.h"
+#include "stm32f407zgt_pro.h"
 
+#include "menu.h"
 #include "flash_if.h"
+
+#include"stdio.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -25,7 +28,9 @@ typedef void (*pFunction)(void);
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static UART_HandleTypeDef uartHandle;
+UART_HandleTypeDef uartHandle;
+UART_HandleTypeDef UART_LOG_Handle;
+
 uint32_t JumpAddress;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -33,18 +38,29 @@ static void SystemClock_Config(void);
 static void Error_Handler(void);
 static void EXTILine4_Config(void);
 pFunction Jump2Application;
+static void IAP_init(void);
+
 /* Private functions ---------------------------------------------------------*/
 static void delay(int tms){
   while(tms!=0)
     tms--;
 }
 
+int put(uint8_t param){
+   /* May be timeouted... */
+  if ( uartHandle.gState == HAL_UART_STATE_TIMEOUT )
+  {
+    uartHandle.gState = HAL_UART_STATE_READY;
+  }
+  return HAL_UART_Transmit(&uartHandle, &param, 1, 0xff);
+}
 
 /**
   * @brief  Main program
   * @param  None
   * @retval None
   */
+
 int main(void){
   HAL_Init();
 
@@ -55,11 +71,16 @@ int main(void){
 
   BSP_BUTTON_Init(BUTTON0,BUTTON_MODE_GPIO);
   if(BSP_BUTTON_GetState(BUTTON0)==GPIO_PIN_SET){
+    IAP_init();
     BSP_LED_On(LED0);
+    printf("in bootloader!\r\n");
+    Main_Menu();
 
 
   }else{
     BSP_LED_On(LED1);
+
+
     /* Test if user code is programmed starting from address "APPLICATION_ADDRESS" */
     //if (((*(__IO uint32_t*)APPLICATION_ADDRESS) & 0x2FFE0000 ) == 0x20000000)
     if(1){
@@ -149,15 +170,20 @@ static void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-static void IAP_init(){
+static void IAP_init(void){
+  uartHandle.Instance      = USART2;
   uartHandle.Init.BaudRate = 115200;
   uartHandle.Init.WordLength = UART_WORDLENGTH_8B;
   uartHandle.Init.StopBits = UART_STOPBITS_1;
   uartHandle.Init.Parity = UART_PARITY_NONE;
   uartHandle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   uartHandle.Init.Mode = UART_MODE_RX | UART_MODE_TX;
+  uartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
 
-  //BSP_COM_Init(COM1, &uartHandle);
+  if(HAL_UART_Init(&uartHandle) != HAL_OK){
+    Error_Handler();
+  }
+  UART_LOG_Handle=uartHandle;
 }
 
 /**

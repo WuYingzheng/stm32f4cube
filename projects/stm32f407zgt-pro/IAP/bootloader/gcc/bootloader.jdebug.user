@@ -1,24 +1,20 @@
 
 Breakpoint=2281510970: 64: 0, State=BP_STATE_ON
 Breakpoint=2281510970: 73: 0, State=BP_STATE_ON
+OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/src/main.c", Line=0
 OpenDocument="cmsis_gcc.h", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/CMSIS/Core/Include/cmsis_gcc.h", Line=322
 OpenDocument="stm32f4xx_hal_cortex.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c", Line=133
-OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-DIY/IAP/bootloader/src/main.c", Line=60
 OpenDocument="stm32f4xx_hal.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c", Line=147
-OpenDocument="stm32f4xx_it.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-DIY/IAP/bootloader/src/stm32f4xx_it.c", Line=44
-OpenDocument="flash_if.h", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-DIY/IAP/bootloader/inc/flash_if.h", Line=0
-OpenDocument="startup_stm32f4xx.s", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-DIY/IAP/bootloader/gcc/boot/startup_stm32f4xx.s", Line=58
-OpenDocument="stm32f407_DIY.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/BSP/stm32f407zgt-DIY/stm32f407_DIY.c", Line=123
 OpenToolbar="Debug", Floating=0, x=0, y=0
-OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=597, h=309, FilterBarShown=0, FilteredItems=[], RefreshRate=1
-OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=597, h=322, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=597, h=330, FilterBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=597, h=343, FilterBarShown=0, ExecCountersShown=0
 OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
-OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1478, h=295, FilterBarShown=0, EditorAddress=0x20000ACC
-OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=597, h=309, FilterBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=370, h=654, FilterBarShown=1
-OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=369, h=295, FilterBarShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1478, h=253, FilterBarShown=0, EditorAddress=0x20000ACC
+OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=597, h=330, FilterBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=370, h=696, FilterBarShown=1
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=369, h=253, FilterBarShown=0
+TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;259]
 TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[120;254;98;125]
-TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;272]
 TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[57;69;48;57;287]
 TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]
 WatchedExpression="JumpAddress", DisplayFormat=DISPLAY_FORMAT_HEX
