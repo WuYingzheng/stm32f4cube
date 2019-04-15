@@ -31,7 +31,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* UART handler declaration */
-UART_HandleTypeDef UartHandle;
+__attribute__((weak)) UART_HandleTypeDef UartHandle;
 __IO ITStatus UartReady = RESET;
 
 /* Buffer used for transmission */
@@ -61,7 +61,7 @@ int _write(int file, char *data, int len)
    }
 
    // arbitrary timeout 1000
-   HAL_StatusTypeDef status =
+   HAL_StatusTypeDef status =\
       HAL_UART_Transmit(&UartHandle, (uint8_t*)data, len, 1000);
 
    // return # of bytes written - as best we can tell
@@ -69,7 +69,6 @@ int _write(int file, char *data, int len)
 }
 
 #endif /* __GNUC__ */
-
 
 /**
   * @brief  Main program

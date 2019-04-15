@@ -23,7 +23,7 @@ Rx Pin: PA.03
   |          |              |                      |               |
   |          |           TX |______________________|RX             |
   |          |              |                      |               |
-  |          |              |     ttl Cable      |               |             
+  |          |              |     ttl Cable        |               |             
   |          |              |                      |               |
   |          |           RX |______________________|TX             |          
   |          |              |                      |               |           
@@ -34,15 +34,18 @@ Rx Pin: PA.03
   |                         |                      
   |_STM32_Board_____________|                      
 
-
-The USART is configured as follows:
+想要uart正常工作，首先需要申请单片机资源，如GPIO,时钟，中断等，这部分工作在钩子函数中完成．
+  HAL_UART_MspInit();
+  HAL_UART_MspDeInit();
+随后设置参数，The USART is configured as follows:
     - BaudRate = 9600 baud  
     - Word Length = 8 Bits (7 data bit + 1 parity bit)
     - One Stop Bit
     - no parity
     - Hardware flow control disabled (RTS and CTS signals)
     - Reception and transmission are enabled in the time
-
+  调用HAL_UART_Init(),实现参数配置;
+  
 一旦uart配置完成，需要考虑将printf()重定向到串口;本例程实现了gcc编译器下的移植；
   移植的关键代码如下：
   #ifdef __GNUC__
