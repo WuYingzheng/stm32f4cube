@@ -57,6 +57,7 @@ CSOURCES+=$(HAL_SOURCES)
 # add this source so that you can re-target printf to uart
 # note! if you want printf() to work, you need re-define  ＇UART_HandleTypeDef UART_LOG_Handle＇
 # in you program, then initialize it.
+INCLUDES+=-I$(STM32_SDK_DIR)/utilities/Log
 CSOURCES+=$(STM32_SDK_DIR)/utilities/Log/uart_log.c
 
 # if you want to link micro-lib to your program, please add this the following
@@ -89,6 +90,12 @@ MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian \
 DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
 CFLAGS=-c $(MCUFLAGS) $(INCLUDES) $(DEFS)  --specs=nano.specs
 CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
+
+# Need following option for LTO as LTO will treat retarget functions as
+# unused without following option
+# 使用重定向标准库函数，并且不会引起多重定义冲突
+CFLAGS+=-fno-builtin
+
 # LINKER FLAGS
 LDSCRIPT=$(BOARD).ld
 LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) --specs=nosys.specs --specs=nano.specs $(INCLUDES_LIBS) $(LINK_LIBS)
@@ -143,7 +150,9 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 	@echo "Linking complete!\n"
 	$(SIZE) $(BINDIR)/$(BINELF)
 
-# Include all .d files
+# Include all .d files 
+# 这一行必须添加在$(BINDIR)/$(BINELF)目标的后面，否则只能编译改变后相关的文件，不能重新链接，
+# 原因还没想明白
 -include $(DEPENDENT)
 
 %.o: %.cpp
@@ -163,13 +172,13 @@ clean:
 
 j-flash:debug
 	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/$(BOARD).cfg\
-	 -c init \
-	 -c targets \
-	 -c "halt" \
-	 -c "flash write_image erase bin/$(BINELF)" \
-	 -c "verify_image bin/outp.elf" \
-	 -c "reset run" \
-	 -c shutdown
+    -c "init" \
+    -c "reset init" \
+    -c "flash probe 0"\
+    -c "flash info 0"\
+    -c "program bin/"$(BINELF)" verify reset" \
+    -c "reset run"\
+    -c "shutdown"
 
 st-flash: release
 	openocd -f  board/stm32f429discovery.cfg\

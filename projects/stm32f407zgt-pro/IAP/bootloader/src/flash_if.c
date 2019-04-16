@@ -1,5 +1,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "flash_if.h"
+#include "stdio.h"
+#include  <sys/unistd.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -15,13 +17,15 @@ static uint32_t GetSector(uint32_t Address);
   * @param  None
   * @retval None
   */
-void FLASH_If_Init(void)
-{ 
+void FLASH_If_Init(void){
+  printf("%s:%d: Unlocks Flash for write access...",__FILE__,__LINE__); 
+  fflush(stdout);
   HAL_FLASH_Unlock(); 
 
   /* Clear pending flags (if any) */  
   __HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | 
                          FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
+  printf("OK!\r\n");
 }
 
 /**
@@ -38,7 +42,6 @@ uint32_t FLASH_If_Erase(uint32_t StartSector)
 
   /* Unlock the Flash to enable the flash control register access *************/ 
   FLASH_If_Init();
-  
   /* Get the sector where start the user flash area */
   UserStartSector = GetSector(APPLICATION_ADDRESS);
   
@@ -47,12 +50,14 @@ uint32_t FLASH_If_Erase(uint32_t StartSector)
   pEraseInit.NbSectors = 10;
   pEraseInit.VoltageRange = VOLTAGE_RANGE_3;
     
+  printf("%s:%d: erase user flash area... ",__FILE__,__LINE__);
+  fflush(stdout);
   if (HAL_FLASHEx_Erase(&pEraseInit, &SectorError) != HAL_OK)
   {
      /* Error occurred while page erase */
      return (1);
   }
-  
+  printf("OK!\r\n");
   return (0);
 }
 

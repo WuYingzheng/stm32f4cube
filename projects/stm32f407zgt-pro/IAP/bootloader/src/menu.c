@@ -1,11 +1,14 @@
 #include "stdio.h"
 #include "menu.h"
+#include "uart_log.h"
 
 //pFunction JumpToApplication;
 uint32_t JumpAddress;
 uint32_t FlashProtection = 0;
 uint8_t aFileName[108];
 
+
+extern UART_HandleTypeDef UART_LOG_Handle;
 
 static void SerialDownload(void);
 static void SerialUpload(void);
@@ -51,7 +54,8 @@ void Main_Menu(void)
 	
 
     // Receive key 
-    HAL_UART_Receive(&uartHandle, &key, 1, 0xffffffff);
+    //HAL_UART_Receive(&UART_LOG_Handle, &key, 1, 0xffffffff);
+    key=getchar();
 
     switch (key){
     case '1' :
@@ -142,7 +146,7 @@ void SerialDownload(void)
   COM_StatusTypeDef result;
 
 
-  printf("Waiting for the file to be sent ... (press 'a' to abort)\n\r");
+  printf("\r\nWaiting for the file to be sent ... (press 'a' to abort)\r\n");
   result = Ymodem_Receive( &size );
   if (result == COM_OK)
   {

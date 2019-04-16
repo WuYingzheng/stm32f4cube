@@ -3,6 +3,7 @@
 // 在该文件中，put()是一个空函数．
 
 /* Includes ------------------------------------------------------------------*/
+#include "stdio.h"
 #include "flash_if.h"
 #include "ymodem.h"
 #include "string.h"
@@ -43,6 +44,7 @@ __attribute__((weak)) int put(uint8_t param){
   * @retval HAL_OK: normally return
   *         HAL_BUSY: abort by user
   */
+
 static HAL_StatusTypeDef ReceivePacket(uint8_t *p_data, uint32_t *p_length, uint32_t timeout)
 {
   uint32_t crc;
@@ -272,7 +274,7 @@ uint8_t CalcChecksum(const uint8_t *p_data, uint32_t size)
   * @param  p_size The size of the file.
   * @retval COM_StatusTypeDef result of reception/programming
   */
-COM_StatusTypeDef Ymodem_Receive ( uint32_t *p_size )
+COM_StatusTypeDef Ymodem_Receive( uint32_t *p_size )
 {
   uint32_t i, packet_length, session_done = 0, file_done, errors = 0, session_begin = 0;
  // uint32_t flashdestination;
@@ -290,45 +292,46 @@ COM_StatusTypeDef Ymodem_Receive ( uint32_t *p_size )
     file_done = 0;
     while ((file_done == 0) && (result == COM_OK))
     {
-      switch (ReceivePacket(aPacketData, &packet_length, DOWNLOAD_TIMEOUT))
-      {
+      switch (ReceivePacket(aPacketData, &packet_length, DOWNLOAD_TIMEOUT)){
         case HAL_OK:
           errors = 0;
           switch (packet_length)
           {
             case 2:
               /* Abort by sender */
+              printf("%s:%d: abort by sender\r\n",__FILE__,__LINE__);
               put(ACK);
               result = COM_ABORT;
               break;
             case 0:
               /* End of transmission */
+              printf("%s:%d: End of transmission\r\n",__FILE__,__LINE__);
               put(ACK);
               file_done = 1;
               break;
-            default:
-              /* Normal packet */
-              if (aPacketData[PACKET_NUMBER_INDEX] != (uint8_t)packets_received)
-              {
+            default:// Normal packet 
+              printf("%s:%d: Normal packet \r\n",__FILE__,__LINE__);
+              if (aPacketData[PACKET_NUMBER_INDEX] != (uint8_t)packets_received){
+                printf("%s:%d: Not ack \r\n",__FILE__,__LINE__);
                 put(NAK);
               }
               else
               {
-                if (packets_received == 0)
-                {
-                  /* File name packet */
+                if (packets_received == 0){/* File name packet */
+                  printf("%s:%d: File name packet \r\n",__FILE__,__LINE__);
                   if (aPacketData[PACKET_DATA_INDEX] != 0)
                   {
                     /* File name extraction */
                     i = 0;
                     file_ptr = aPacketData + PACKET_DATA_INDEX;
-                    while ( (*file_ptr != 0) && (i < FILE_NAME_LENGTH))
-                    {
+                    while ( (*file_ptr != 0) && (i < FILE_NAME_LENGTH)){
                       aFileName[i++] = *file_ptr++;
                     }
-
+                    
                     /* File size extraction */
                     aFileName[i++] = '\0';
+                    printf("%s:%d: copy file name ok \r\n",__FILE__,__LINE__);
+
                     i = 0;
                     file_ptr ++;
                     while ( (*file_ptr != ' ') && (i < FILE_SIZE_LENGTH))
@@ -340,32 +343,33 @@ COM_StatusTypeDef Ymodem_Receive ( uint32_t *p_size )
 
                     /* Test the size of the image to be sent */
                     /* Image size is greater than Flash size */
-                    if (*p_size > (USER_FLASH_SIZE + 1))
-                    {
+                    if (*p_size > (USER_FLASH_SIZE + 1)){
                       /* End session */
+                      printf("%s:%d: Image size too large \r\n",__FILE__,__LINE__);
                       tmp = CA;
                       HAL_UART_Transmit(&uartHandle, &tmp, 1, NAK_TIMEOUT);
                       HAL_UART_Transmit(&uartHandle, &tmp, 1, NAK_TIMEOUT);
                       result = COM_LIMIT;
                     }
+
+                    printf("%s:%d: File Name:%s, SIZE:%d\r\n",__FILE__,__LINE__,aFileName,filesize);
                     /* erase user application area */
                     FLASH_If_Erase(APPLICATION_ADDRESS);
+                    printf("%s:%d: Erase flash done\r\n",__FILE__,__LINE__);
                     *p_size = filesize;
 
                     put(ACK);
                     put(CRC16);
-                  }
-                  /* File header packet is empty, end session */
-                  else
-                  {
+                  
+                  }else{/* File header packet is empty, end session */
+                    printf("%s:%d: File header packet is empty, end session\r\n",__FILE__,__LINE__);
                     put(ACK);
                     file_done = 1;
                     session_done = 1;
                     break;
                   }
-                }
-                else /* Data packet */
-                {
+                }else /* Data packet */{
+                  printf("%s:%d: Data packet\r\n",__FILE__,__LINE__);
                   ramsource = (uint32_t) & aPacketData[PACKET_DATA_INDEX];
                   /* Write received data in Flash */
                   if (FLASH_If_Write(flashdestination, (uint32_t*) ramsource, packet_length/4) == FLASHIF_OK)
@@ -388,23 +392,25 @@ COM_StatusTypeDef Ymodem_Receive ( uint32_t *p_size )
           }
           break;
         case HAL_BUSY: /* Abort actually */
+          printf("%s:%d HAL_BUSY\r\n",__FILE__,__LINE__);
           put(CA);
           put(CA);
           result = COM_ABORT;
           break;
-        default:
+        default:// error
           if (session_begin > 0)
           {
+            printf("%s:%d session_begin > 0\r\n",__FILE__,__LINE__);
             errors ++;
           }
-          if (errors > MAX_ERRORS)
-          {
+          if (errors > MAX_ERRORS){
             /* Abort communication */
+            printf("%s:%d errors > MAX_ERRORS, Abort communication\r\n",__FILE__,__LINE__);
             put(CA);
             put(CA);
           }
-          else
-          {
+          else{
+            printf("%s:%d Ask for a packet\r\n",__FILE__,__LINE__);
             put(CRC16); /* Ask for a packet */
           }
           break;

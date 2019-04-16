@@ -12,6 +12,7 @@
 
 #include "menu.h"
 #include "flash_if.h"
+#include "uart_log.h"
 
 #include"stdio.h"
 
@@ -29,7 +30,6 @@ typedef void (*pFunction)(void);
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef uartHandle;
-UART_HandleTypeDef UART_LOG_Handle;
 
 uint32_t JumpAddress;
 
@@ -63,13 +63,14 @@ int put(uint8_t param){
 
 int main(void){
   HAL_Init();
-
   SystemClock_Config();
 
   BSP_LED_Init(LED0);
   BSP_LED_Init(LED1);
 
   BSP_BUTTON_Init(BUTTON0,BUTTON_MODE_GPIO);
+  uartLogInit(USART1);
+
   if(BSP_BUTTON_GetState(BUTTON0)==GPIO_PIN_SET){
     IAP_init();
     BSP_LED_On(LED0);
@@ -183,7 +184,7 @@ static void IAP_init(void){
   if(HAL_UART_Init(&uartHandle) != HAL_OK){
     Error_Handler();
   }
-  UART_LOG_Handle=uartHandle;
+  //UART_LOG_Handle=uartHandle;
 }
 
 /**
