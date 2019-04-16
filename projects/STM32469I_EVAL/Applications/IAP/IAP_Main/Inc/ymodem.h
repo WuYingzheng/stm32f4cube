@@ -63,11 +63,13 @@ typedef enum
  * \------------------------------------------------------------------------/
  * the first byte is left unused for memory alignment reasons                 */
 
-#define FILE_NAME_LENGTH        ((uint32_t)64)
+#define FILE_NAME_LENGTH        ((uint32_t)256)
 #define FILE_SIZE_LENGTH        ((uint32_t)16)
 
-#define SOH                     ((uint8_t)0x01)  /* start of 128-byte data packet */
-#define STX                     ((uint8_t)0x02)  /* start of 1024-byte data packet */
+/* start of 128-byte data packet */
+#define SOH                     ((uint8_t)0x01)
+/* start of 1024-byte data packet */  
+#define STX                     ((uint8_t)0x02)  
 #define EOT                     ((uint8_t)0x04)  /* end of transmission */
 #define ACK                     ((uint8_t)0x06)  /* acknowledge */
 #define NAK                     ((uint8_t)0x15)  /* negative acknowledge */
