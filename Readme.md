@@ -35,4 +35,5 @@ The **STM32CubeF4 MCU Package** projects are directly running on the STM32F4 ser
 	
 ## Troubleshooting
 
-** For any other question** related to the STM32F4 product, the tools, the environment, you can submit a topic on the [ST Community/STM32 MCUs forum](https://community.st.com/s/group/0F90X000000AXsASAW/stm32-mcus)
+** stm32f407zgt-pro 板载ch340 uart使能后，芯片无法复位，必须关闭uart串口，芯片才能复位.
+** 芯片复位不能使用uart1! 解决方案，移除任何可能占用uart1的设备．
