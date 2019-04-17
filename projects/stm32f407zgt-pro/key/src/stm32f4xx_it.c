@@ -13,7 +13,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f407_DIY.h"
+#include "stm32f407zgt_pro.h"
 #include "stm32f4xx_it.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
