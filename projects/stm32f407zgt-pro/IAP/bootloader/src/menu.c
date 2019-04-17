@@ -1,11 +1,11 @@
-#include "stdio.h"
+#include "common.h"
 #include "menu.h"
-#include "uart_log.h"
 
-//pFunction JumpToApplication;
+
+pFunction JumpToApplication;
 uint32_t JumpAddress;
 uint32_t FlashProtection = 0;
-uint8_t aFileName[108];
+uint8_t aFileName[32];
 
 
 extern UART_HandleTypeDef UART_LOG_Handle;
@@ -23,7 +23,7 @@ void Main_Menu(void)
   printf("\r\n=                                                                    =");
   printf("\r\n=          STM32F4xx In-Application Programming Application          =");
   printf("\r\n=                                                                    =");
-  printf("\r\n=                       By MCD Application Team                      =");
+  printf("\r\n=                       Modified by wyz                              =");
   printf("\r\n======================================================================");
   printf("\r\n\r\n");
 
@@ -41,13 +41,13 @@ void Main_Menu(void)
 
     if(FlashProtection != FLASHIF_PROTECTION_NONE)
     {
-      printf((uint8_t *)"  Disable the write protection ------------------------- 4\r\n\n");
+      printf("  Disable the write protection ------------------------- 4\r\n\n");
     }
     else
     {
-      printf((uint8_t *)"  Enable the write protection -------------------------- 4\r\n\n");
+      printf("  Enable the write protection -------------------------- 4\r\n\n");
     }
-    printf((uint8_t *)"==========================================================\r\n\n");
+    printf("==========================================================\r\n\n");
 
     // Clean the input path 
     __HAL_UART_FLUSH_DRREGISTER(&uartHandle);
@@ -69,12 +69,12 @@ void Main_Menu(void)
     case '3' :
       printf("Start program execution......\r\n\n");
       // execute the new program 
-      //JumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
+      JumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
       // Jump to user application 
-      //JumpToApplication = (pFunction) JumpAddress;
+      JumpToApplication = (pFunction) JumpAddress;
       // Initialize user application's Stack Pointer 
-      //__set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
-      //JumpToApplication();
+      __set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
+      JumpToApplication();
       break;
     case '4' :
       if (FlashProtection != FLASHIF_PROTECTION_NONE)
@@ -145,34 +145,28 @@ void SerialDownload(void)
   uint32_t size = 0;
   COM_StatusTypeDef result;
 
-
-  printf("\r\nWaiting for the file to be sent ... (press 'a' to abort)\r\n");
+  printf("\r\nWaiting for the file to be sent ... (press 'a' to abort)\r\n"); // not support now
   result = Ymodem_Receive( &size );
-  if (result == COM_OK)
-  {
-    printf((uint8_t *)"\n\n\r Programming Completed Successfully!\n\r--------------------------------\r\n Name: ");
+  if (result == TRUE){
+    printf("\n\n\r Programming Completed Successfully!\n\r----------------------\r\n Name: ");
     printf(aFileName);
     UTIL1_Num32sToStr(number,sizeof(number), size);
-    printf("\n\r Size: ");
-    printf(number);
-    printf(" Bytes\r\n");
-    printf("-------------------\n");
+    printf("\n\r Size: %d Bytes\r\n",number);
+    printf("----------------------\n");
   }
-  else if (result == COM_LIMIT)
-  {
-    printf((uint8_t *)"\n\n\rThe image size is higher than the allowed space memory!\n\r");
+  else if (result == COM_LIMIT){
+    printf("\n\n\rThe image size is higher than the allowed space memory!\n\r");
   }
-  else if (result == COM_DATA)
-  {
-    printf((uint8_t *)"\n\n\rVerification failed!\n\r");
+  else if (result == COM_DATA){
+    printf("\n\n\rVerification failed!\n\r");
   }
   else if (result == COM_ABORT)
   {
-    printf((uint8_t *)"\r\n\nAborted by user.\n\r");
+    printf("\r\n\nAborted by user.\n\r");
   }
   else
   {
-    printf((uint8_t *)"\n\rFailed to receive the file!\n\r");
+    printf("\n\rFailed to receive the file!\n\r");
   }
 
 }

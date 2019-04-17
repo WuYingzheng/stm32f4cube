@@ -93,12 +93,16 @@ CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
 
 # Need following option for LTO as LTO will treat retarget functions as
 # unused without following option
-# 使用重定向标准库函数，并且不会引起多重定义冲突
+# 使用重定向标准库函数，并且不会引起冲突
 CFLAGS+=-fno-builtin
 
 # LINKER FLAGS
 LDSCRIPT=$(BOARD).ld
-LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) --specs=nosys.specs --specs=nano.specs $(INCLUDES_LIBS) $(LINK_LIBS)
+LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) \
+			--specs=nosys.specs --specs=nano.specs \
+			-Wl,-Map=$(BINDIR)/output.map \
+			-Wl,-gc-sections\
+			$(INCLUDES_LIBS) $(LINK_LIBS)
 
 ###
 # Build Rules
@@ -111,6 +115,7 @@ debug: release
 
 all: release-memopt
 
+# 可以统计内存占用情况
 release-memopt-blame: CFLAGS+=-g
 release-memopt-blame: CXXFLAGS+=-g
 release-memopt-blame: LDFLAGS+=-g -Wl,-Map=$(BINDIR)/output.map
@@ -121,11 +126,12 @@ release-memopt-blame:
 	@echo "\n... and corresponging source files to blame.\n"
 	$(NM) --reverse-sort --size-sort -S -tx $(BINDIR)/$(BINELF) | head -10 | cut -d':' -f2 | cut -d' ' -f1 | $(A2L) -e $(BINDIR)/$(BINELF) | cat -n # Output legend: man addr2line
 
+# 优化内存,效果非常显著
 release-memopt: DEFS+=-DCUSTOM_NEW -DNO_EXCEPTIONS
 release-memopt: CFLAGS+=-Os -ffunction-sections -fdata-sections -fno-builtin # -flto
 release-memopt: CXXFLAGS+=-Os -fno-exceptions -ffunction-sections -fdata-sections -fno-builtin -fno-rtti # -flto
 #fno-buildin 不使用内联函数
-release-memopt: LDFLAGS+=-Os -Wl,-gc-sections --specs=nano.specs # -flto
+release-memopt: LDFLAGS+=-Os -Wl,-gc-sections  -flto
 release-memopt: release
 
 release:  $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)

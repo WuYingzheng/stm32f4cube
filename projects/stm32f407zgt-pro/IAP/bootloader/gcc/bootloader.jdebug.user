@@ -4,31 +4,30 @@ Breakpoint=2963656874: 47: 0, State=BP_STATE_ON
 Breakpoint=2963656874: 56: 0, State=BP_STATE_ON
 Breakpoint=1717072341: 56: 0, State=BP_STATE_ON
 Breakpoint=3663986027: 276: 0, State=BP_STATE_ON
+Breakpoint=3663986027: 367: 0, State=BP_STATE_ON
 Breakpoint=2281510970: 64: 0, State=BP_STATE_ON
 Breakpoint=2281510970: 73: 0, State=BP_STATE_ON
 Breakpoint=652702334: 276: 0, State=BP_STATE_ON
-OpenDocument="stm32f4xx_it.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/src/stm32f4xx_it.c", Line=43
-OpenDocument="stm32f4xx_hal_flash.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c", Line=542
-OpenDocument="menu.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/src/menu.c", Line=132
-OpenDocument="stm32f4xx_hal_uart.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c", Line=2667
-OpenDocument="uart_log.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/utilities/Log/uart_log.c", Line=12
-OpenDocument="cmsis_gcc.h", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/CMSIS/Core/Include/cmsis_gcc.h", Line=307
+OpenDocument="ymodem.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/src/ymodem.c", Line=358
 OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/src/main.c", Line=53
+OpenDocument="startup_stm32f4xx.s", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/gcc/boot/startup_stm32f4xx.s", Line=59
+OpenDocument="stm32f4xx_it.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-pro/IAP/bootloader/src/stm32f4xx_it.c", Line=0
 OpenToolbar="Debug", Floating=0, x=0, y=0
-OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=412, h=378, FilterBarShown=0, FilteredItems=[], RefreshRate=1
-OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=412, h=319, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=561, h=364, FilterBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=561, h=306, FilterBarShown=0, ExecCountersShown=0
 OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
-OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1224, h=125, FilterBarShown=0, EditorAddress=0x20000ACC
-OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=412, h=378, FilterBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=451, h=720, FilterBarShown=1
-OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=420, h=125, FilterBarShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=1124, h=216, FilterBarShown=0, EditorAddress=0x20000ACC
+OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=561, h=364, FilterBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=355, h=693, FilterBarShown=1
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=390, h=216, FilterBarShown=0
 TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;259]
-TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[152;234;98;54]
-TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[139;69;48;57;287]
+TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[152;279;106;54]
+TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[139;69;48;57;238]
 TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]
-WatchedExpression="JumpAddress", DisplayFormat=DISPLAY_FORMAT_HEX
+WatchedExpression="JumpAddress"
 WatchedExpression="APPLICATION_ADDRESS"
 WatchedExpression="packet_length"
-WatchedExpression="aPacketData"
+WatchedExpression="aPacketData", RefreshRate=1
 WatchedExpression="49 ('1')"
 WatchedExpression="len"
+WatchedExpression="ramsource"

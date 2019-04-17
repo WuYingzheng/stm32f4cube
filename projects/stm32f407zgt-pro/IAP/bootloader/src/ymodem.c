@@ -17,6 +17,8 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 __IO uint32_t flashdestination;
+extern uint8_t aFileName[108];
+
 /* @note ATTENTION - please keep this variable 32bit alligned */
 uint8_t aPacketData[PACKET_1K_SIZE + PACKET_DATA_INDEX + PACKET_TRAILER_SIZE];
 
@@ -274,63 +276,181 @@ uint8_t CalcChecksum(const uint8_t *p_data, uint32_t size)
   * @param  p_size The size of the file.
   * @retval COM_StatusTypeDef result of reception/programming
   */
-COM_StatusTypeDef Ymodem_Receive( uint32_t *p_size )
+bool Ymodem_Receive( uint32_t *p_size )
 {
-  uint32_t i, packet_length, session_done = 0, file_done, errors = 0, session_begin = 0;
- // uint32_t flashdestination;
-  uint32_t ramsource, filesize, packets_received;
+  SESSION_StatusTypeDef session = SESSION_IDLE;
+  int packet_index=0,packets_received=0;
+  uint32_t byte_received=0;
+
+  uint32_t i, packet_length, errors = 0;
+  uint32_t ramsource, filesize;
   uint8_t *file_ptr;
   uint8_t file_size[FILE_SIZE_LENGTH], tmp;
   COM_StatusTypeDef result = COM_OK;
 
-  /* Initialize flashdestination variable */
+  // Initialize flashdestination variable 
   flashdestination = APPLICATION_ADDRESS;
 
+  while(session < SESSION_ENDED){
+    switch (ReceivePacket(aPacketData, &packet_length, DOWNLOAD_TIMEOUT)){
+      case HAL_OK:
+        errors = 0; // 清空错误计数
+
+        switch (packet_length){
+          case 0:// End of transmission
+            if(session == SESSION_BEGINED){
+              put(NAK);
+              session = SESSION_ENDING;
+            }
+            else if(session == SESSION_ENDING){
+              put(ACK);
+              put(CRC16); // wait for sender end conform
+            }
+            break;
+          case 2://Abort by sender
+            printf("%s:%d: Abort by sender\r\n",__FILE__,__LINE__);
+            put(ACK);
+            session = SESSION_ABORT;
+            break;
+        
+          default:// Normal packet 
+            packet_index=aPacketData[PACKET_NUMBER_INDEX];
+            if (packet_index == 0 && packets_received==0){// file name packet
+            // | Pathname | Length | Modification Date | Mode | Serial Number |
+              file_ptr = aPacketData + PACKET_DATA_INDEX;
+              i=0;
+              while ( (*file_ptr != 0) && (i < FILE_NAME_LENGTH)){
+                aFileName[i++] = *file_ptr++;
+              }
+              aFileName[i++]='\0';
+
+              i = 0;
+              file_ptr ++;
+              while ( (*file_ptr != ' ') && (i < FILE_SIZE_LENGTH)){
+                file_size[i++] = *file_ptr++;
+              }
+              file_size[i++] = '\0';
+              UTIL1_atoi(file_size, &filesize);
+
+              if (*p_size > (USER_FLASH_SIZE + 1)){
+                /* End session */
+                printf("%s:%d: Image size too large \r\n",__FILE__,__LINE__);
+                tmp = CA;
+                put(CA);
+                put(CA);
+                session = SESSION_ABORT;
+              }//file too large
+              else{
+                printf("%s:%d: File Name:%s, SIZE:%d\r\n",__FILE__,__LINE__,aFileName,filesize);
+                FLASH_If_Erase(APPLICATION_ADDRESS);
+                put(ACK);
+                put(CRC16);
+                session =SESSION_BEGINED;
+                *p_size=filesize; // return value
+              }
+
+            }// end first packet for name
+            else if(packet_index == 0 && session == SESSION_ENDING){
+              printf("\r\n%s:%d: Session end!\r\n",__FILE__,__LINE__);
+              put(ACK);
+              session = SESSION_ENDED;
+              break;
+            }// end of transmition
+            else{//date package
+              byte_received+=packet_length;
+              packets_received ++;
+              printf("\rReceiving date... %d/%d, index: %d length: %d",byte_received,filesize,packets_received,packet_length);
+              fflush(stdin);
+              ramsource = (uint32_t) & aPacketData[PACKET_DATA_INDEX];
+              // Write received data in Flash, may be there are more data than origin file, however write '0' to
+              // flash end have no effect to executeable files.  
+              if (FLASH_If_Write(flashdestination, (uint32_t*) ramsource, packet_length/4) == FLASHIF_OK){
+                flashdestination += packet_length;
+                put(ACK);
+              }
+              else {// An error occurred while writing to Flash memory 
+                put(CA);
+                put(CA);
+                session = SESSION_ABORT;
+              }
+            }
+
+            break;
+        }
+
+        break;
+      case HAL_BUSY:
+        printf("%s:%d Error: HAL busy, session aborted!\r\n",__FILE__,__LINE__);
+        put(CA);
+        put(CA);
+        session = SESSION_ABORT;
+        break;
+      default:// error acured
+        if (session >= SESSION_BEGINED){
+            printf("%s:%d Receive Packet error.\r\n",__FILE__,__LINE__);
+            errors ++;
+            put(NAK);
+        }
+        if (errors > MAX_ERRORS){
+            // Abort communication
+            printf("%s:%d errors > MAX_ERRORS, Abort communication\r\n",__FILE__,__LINE__);
+            put(CA);  // cancel session.
+            put(CA);
+            session = SESSION_ABORT;
+        }
+        else{
+            printf("%s:%d Ask for a packet\r\n",__FILE__,__LINE__);
+            put(CRC16); // Ask for a packet 
+            session = SESSION_BEGINING;
+        }
+        break;
+    }
+
+  }
+/*
   while ((session_done == 0) && (result == COM_OK))
   {
     packets_received = 0;
     file_done = 0;
-    while ((file_done == 0) && (result == COM_OK))
-    {
+    while ((file_done == 0) && (result == COM_OK)){
       switch (ReceivePacket(aPacketData, &packet_length, DOWNLOAD_TIMEOUT)){
         case HAL_OK:
           errors = 0;
-          switch (packet_length)
-          {
+          switch (packet_length){ // 检测接收到数据的长度
             case 2:
-              /* Abort by sender */
-              printf("%s:%d: abort by sender\r\n",__FILE__,__LINE__);
+              // Abort by sender 
+              printf("%s:%d: Abort by sender\r\n",__FILE__,__LINE__);
               put(ACK);
               result = COM_ABORT;
               break;
             case 0:
-              /* End of transmission */
-              printf("%s:%d: End of transmission\r\n",__FILE__,__LINE__);
+              // End of transmission 
+              printf("\r\n%s:%d: End of transmission\r\n",__FILE__,__LINE__);
+              if(session_begin){
+                put(NAK);
+              }
               put(ACK);
               file_done = 1;
               break;
             default:// Normal packet 
-              printf("%s:%d: Normal packet \r\n",__FILE__,__LINE__);
               if (aPacketData[PACKET_NUMBER_INDEX] != (uint8_t)packets_received){
                 printf("%s:%d: Not ack \r\n",__FILE__,__LINE__);
                 put(NAK);
               }
-              else
-              {
-                if (packets_received == 0){/* File name packet */
+              else{
+                if (session == SESSION_IDLE){// File name packet 
                   printf("%s:%d: File name packet \r\n",__FILE__,__LINE__);
                   if (aPacketData[PACKET_DATA_INDEX] != 0)
                   {
-                    /* File name extraction */
+                    // File name extraction 
                     i = 0;
                     file_ptr = aPacketData + PACKET_DATA_INDEX;
                     while ( (*file_ptr != 0) && (i < FILE_NAME_LENGTH)){
                       aFileName[i++] = *file_ptr++;
                     }
-                    
-                    /* File size extraction */
+              
+                    // File size extraction 
                     aFileName[i++] = '\0';
-                    printf("%s:%d: copy file name ok \r\n",__FILE__,__LINE__);
 
                     i = 0;
                     file_ptr ++;
@@ -341,10 +461,10 @@ COM_StatusTypeDef Ymodem_Receive( uint32_t *p_size )
                     file_size[i++] = '\0';
                     UTIL1_atoi(file_size, &filesize);
 
-                    /* Test the size of the image to be sent */
-                    /* Image size is greater than Flash size */
+                    // Test the size of the image to be sent 
+                    // Image size is greater than Flash size 
                     if (*p_size > (USER_FLASH_SIZE + 1)){
-                      /* End session */
+                      // End session 
                       printf("%s:%d: Image size too large \r\n",__FILE__,__LINE__);
                       tmp = CA;
                       HAL_UART_Transmit(&uartHandle, &tmp, 1, NAK_TIMEOUT);
@@ -353,33 +473,35 @@ COM_StatusTypeDef Ymodem_Receive( uint32_t *p_size )
                     }
 
                     printf("%s:%d: File Name:%s, SIZE:%d\r\n",__FILE__,__LINE__,aFileName,filesize);
-                    /* erase user application area */
+                    // erase user application area 
                     FLASH_If_Erase(APPLICATION_ADDRESS);
-                    printf("%s:%d: Erase flash done\r\n",__FILE__,__LINE__);
+
                     *p_size = filesize;
 
                     put(ACK);
                     put(CRC16);
                   
-                  }else{/* File header packet is empty, end session */
+                  }else{// File header packet is empty, end session
                     printf("%s:%d: File header packet is empty, end session\r\n",__FILE__,__LINE__);
                     put(ACK);
                     file_done = 1;
                     session_done = 1;
                     break;
                   }
-                }else /* Data packet */{
-                  printf("%s:%d: Data packet\r\n",__FILE__,__LINE__);
+                }else // Data packet 
+                {
+                  rdata_byte+=packet_length;
+                  printf("\rReceiving date... %d/%d",rdata_byte,filesize);
                   ramsource = (uint32_t) & aPacketData[PACKET_DATA_INDEX];
-                  /* Write received data in Flash */
+                  // Write received data in Flash 
                   if (FLASH_If_Write(flashdestination, (uint32_t*) ramsource, packet_length/4) == FLASHIF_OK)
                   {
                     flashdestination += packet_length;
                     put(ACK);
                   }
-                  else /* An error occurred while writing to Flash memory */
+                  else // An error occurred while writing to Flash memory 
                   {
-                    /* End session */
+                    //End session 
                     put(CA);
                     put(CA);
                     result = COM_DATA;
@@ -391,33 +513,34 @@ COM_StatusTypeDef Ymodem_Receive( uint32_t *p_size )
               break;
           }
           break;
-        case HAL_BUSY: /* Abort actually */
+        case HAL_BUSY: // Abort actually 
           printf("%s:%d HAL_BUSY\r\n",__FILE__,__LINE__);
           put(CA);
           put(CA);
           result = COM_ABORT;
           break;
-        default:// error
-          if (session_begin > 0)
-          {
-            printf("%s:%d session_begin > 0\r\n",__FILE__,__LINE__);
+        default:// Receive packet error
+          if (session_begin > 0){
+            printf("%s:%d Error: session_begin > 0\r\n",__FILE__,__LINE__);
             errors ++;
           }
           if (errors > MAX_ERRORS){
-            /* Abort communication */
+            // Abort communication 
             printf("%s:%d errors > MAX_ERRORS, Abort communication\r\n",__FILE__,__LINE__);
             put(CA);
             put(CA);
           }
           else{
             printf("%s:%d Ask for a packet\r\n",__FILE__,__LINE__);
-            put(CRC16); /* Ask for a packet */
+            put(CRC16); // Ask for a packet 
           }
           break;
-      }
-    }
-  }
-  return result;
+      }// end switch
+    }// end while ((file_done == 0) && (result == COM_OK))
+  }// end while ((session_done == 0) && (result == COM_OK))
+
+*/
+  return TRUE;
 }
 
 /**

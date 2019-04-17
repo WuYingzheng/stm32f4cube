@@ -7,14 +7,11 @@
   ******************************************************************************
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx_hal.h"
-#include "stm32f407zgt_pro.h"
-
+#include "common.h"
 #include "menu.h"
 #include "flash_if.h"
-#include "uart_log.h"
 
-#include"stdio.h"
+
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -25,7 +22,7 @@
   */ 
 
 /* Private typedef -----------------------------------------------------------*/
-typedef void (*pFunction)(void);
+// typedef void (*pFunction)(void); 
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -48,8 +45,7 @@ static void delay(int tms){
 
 int put(uint8_t param){
    /* May be timeouted... */
-  if ( uartHandle.gState == HAL_UART_STATE_TIMEOUT )
-  {
+  if ( uartHandle.gState == HAL_UART_STATE_TIMEOUT ){
     uartHandle.gState = HAL_UART_STATE_READY;
   }
   return HAL_UART_Transmit(&uartHandle, &param, 1, 0xff);
@@ -74,13 +70,10 @@ int main(void){
   if(BSP_BUTTON_GetState(BUTTON0)==GPIO_PIN_SET){
     IAP_init();
     BSP_LED_On(LED0);
-    printf("in bootloader!\r\n");
     Main_Menu();
-
 
   }else{
     BSP_LED_On(LED1);
-
 
     /* Test if user code is programmed starting from address "APPLICATION_ADDRESS" */
     //if (((*(__IO uint32_t*)APPLICATION_ADDRESS) & 0x2FFE0000 ) == 0x20000000)

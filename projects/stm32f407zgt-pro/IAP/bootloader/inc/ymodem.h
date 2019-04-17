@@ -3,7 +3,7 @@
 #define __YMODEM_H_
 
 extern UART_HandleTypeDef uartHandle;
-extern uint8_t aFileName[108];
+
 /* Includes ------------------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
@@ -20,6 +20,16 @@ typedef enum
   COM_DATA     = 0x04,
   COM_LIMIT    = 0x05
 } COM_StatusTypeDef;
+
+typedef enum{
+  SESSION_IDLE  = 0x00,
+  SESSION_BEGINING = 0x01,
+  SESSION_BEGINED,
+  SESSION_ENDING,       // for first EOT  => NAK
+  SESSION_ENDED,        // for second EOT => ACK & C
+  SESSION_ABORT
+} SESSION_StatusTypeDef;
+
 /**
   * @}
   */
@@ -63,7 +73,7 @@ typedef enum
 #define MAX_ERRORS              ((uint32_t)5)
 
 /* Exported functions ------------------------------------------------------- */
-COM_StatusTypeDef Ymodem_Receive(uint32_t *p_size);
+bool Ymodem_Receive( uint32_t *p_size );
 COM_StatusTypeDef Ymodem_Transmit(uint8_t *p_buf, const uint8_t *p_file_name, uint32_t file_size);
 
 #endif  /* __YMODEM_H_ */

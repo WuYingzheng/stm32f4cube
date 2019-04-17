@@ -50,14 +50,11 @@ uint32_t FLASH_If_Erase(uint32_t StartSector)
   pEraseInit.NbSectors = 10;
   pEraseInit.VoltageRange = VOLTAGE_RANGE_3;
     
-  printf("%s:%d: erase user flash area... ",__FILE__,__LINE__);
-  fflush(stdout);
-  if (HAL_FLASHEx_Erase(&pEraseInit, &SectorError) != HAL_OK)
-  {
+  if (HAL_FLASHEx_Erase(&pEraseInit, &SectorError) != HAL_OK){
      /* Error occurred while page erase */
      return (1);
   }
-  printf("OK!\r\n");
+  
   return (0);
 }
 
