@@ -7,4 +7,4 @@
 * 对应的修改中断控制寄存器，参见main()
 
 # 注意事项
-* jlink烧录过程要注意，防止意外擦除bootloader
+* jlink烧录过程要注意，防止意外擦除bootloader, [openocd document](http://openocd.org/doc/html/Flash-Commands.html#program)
