@@ -34,6 +34,6 @@ The **STM32CubeF4 MCU Package** projects are directly running on the STM32F4 ser
     * [STM32469I-Discovery](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f469idiscovery.html)
 	
 ## Troubleshooting
-
-** stm32f407zgt-pro 板载ch340 uart使能后，芯片无法复位，必须关闭uart串口，芯片才能复位.
-** 芯片复位不能使用uart1! 解决方案，移除任何可能占用uart1的设备．
+ * openocd烧录失败和stlink固件的版本有关系，如果失败请把stlink固件更新到最新版本
+ * stm32f407zgt-pro芯片复位时，不能使用uart1! 解决方案，移除任何可能占用uart1的设备:
+   板载ch340 uart使能后，芯片无法复位，必须关闭uart串口
