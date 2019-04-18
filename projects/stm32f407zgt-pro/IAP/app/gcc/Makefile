@@ -108,6 +108,11 @@ LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) \
 # Build Rules
 .PHONY: all release release-memopt debug clean
 
+debug: CFLAGS+=-g
+debug: CXXFLAGS+=-g
+debug: LDFLAGS+=-g
+debug: release
+
 all: release-memopt
 
 # 可以统计内存占用情况
@@ -128,11 +133,6 @@ release-memopt: CXXFLAGS+=-Os -fno-exceptions -ffunction-sections -fdata-section
 #fno-buildin 不使用内联函数
 release-memopt: LDFLAGS+=-Os -Wl,-gc-sections  -flto
 release-memopt: release
-
-debug: CFLAGS+=-g
-debug: CXXFLAGS+=-g
-debug: LDFLAGS+=-g
-debug: release
 
 release:  $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
 
@@ -176,15 +176,11 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 clean:
 	rm -f $(DEPENDENT) $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
+# 最明智的做法，可以防止flash中的程序被误擦除
+# http://openocd.org/doc/html/Flash-Programming.html#Flash-Programming
 j-flash:debug
 	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/$(BOARD).cfg\
-    -c "init" \
-    -c "reset init" \
-    -c "flash probe 0"\
-    -c "flash info 0"\
-    -c "program bin/$(BINELF) verify" \
-    -c "reset run"\
-    -c "shutdown"
+    -c "program $(BINDIR)/$(BINARY) verify reset exit 0x08008000"
 
 st-flash: release
 	openocd -f  board/stm32f429discovery.cfg\

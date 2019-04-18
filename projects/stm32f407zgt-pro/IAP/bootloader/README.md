@@ -1,7 +1,55 @@
 # 基于UART ymodem 的bootloader
 
 
-# hex 文件解析
+# flash 布局
+ * chip: stm32f469zgt:
+start at 0x08000000, size 0x00100000, buswidth 0, chipwidth 0   ??? 256k ?  不是很明白
+   *  0: 0x00000000 (0x4000 16kB)   not protected
+   *  1: 0x00004000 (0x4000 16kB)   not protected
+   *  2: 0x00008000 (0x4000 16kB)   not protected
+   *  3: 0x0000c000 (0x4000 16kB)   not protected
+   *  4: 0x00010000 (0x10000 64kB)  not protected
+   *  5: 0x00020000 (0x20000 128kB) not protected
+   *  6: 0x00040000 (0x20000 128kB) not protected
+   *  7: 0x00060000 (0x20000 128kB) not protected
+   *  8: 0x00080000 (0x20000 128kB) not protected
+   *  9: 0x000a0000 (0x20000 128kB) not protected
+   * 10: 0x000c0000 (0x20000 128kB) not protected
+   * 11: 0x000e0000 (0x20000 128kB) not protected
+
+Following picture illustrates the situation in program memory:
+Figure 2. Flash memory usage
+
+ Top Flash Memory address 
+   /-------------------------------------------\  0x080FFFFF
+   |                                           |
+   |                                           |
+   |                                           |
+   |                                           |
+   |                                           |
+   |          Sector 2 - Sector 11             |
+   |                                           |
+   |                                           |
+   |                                           |
+   |                                           |
+   |                                           |
+   |                                           |
+   |                                           |
+   |          User code                        |
+   |                                           |
+   |- - - - - - - - - - - - - - - - - - - - - -|
+   |          Vector table                     |
+   |-------------------------------------------|  0x08008000
+   |          IAP code                         |
+   |- - - - - - - - - - - - - - - - - - - - - -|
+   |          Vector table                     |
+   \-------------------------------------------/	 0x08000000		
+
+# Attention
+  * the size of bootloarder must not biger than 32k, because the start address of the application begin from 0x08008000
+
+# 拓展阅读
+## hex 文件解析
  * 格式如下:
   :本行数据长度 | 本行数据起始地址 | 数据类型 | 数据      | 校验码
     1 byte	      2 bytes        1 byte   n byte	 1 byte
@@ -17,8 +65,3 @@
 
 ## 04,05两种类型和地址有关
    如 :02 0000 04 0800 F2 表示基地址为：(0x0800 << 16) = 0x0800 0000 
-
- 
-
-# Attention
-  * the size of bootloarder must not biger than 32k, because the start address of the application begin from 0x08008000
