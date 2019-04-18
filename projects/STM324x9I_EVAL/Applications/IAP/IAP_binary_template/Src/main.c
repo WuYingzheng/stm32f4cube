@@ -78,14 +78,12 @@ int main(void)
     */
 
   /* Initialize Leds mounted on STM324x9I-EVAL board */
+  BSP_LED_Init(LED0);
   BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2);
-  BSP_LED_Init(LED3);
-  BSP_LED_Init(LED4);
 
   /* Turn on LED1 and LED3 */
+  BSP_LED_On(LED0);
   BSP_LED_On(LED1);
-  BSP_LED_On(LED3);
 
   /* Setup SysTick Timer for 1 msec interrupts.
      ------------------------------------------
@@ -123,18 +121,12 @@ int main(void)
   while (1)
   {
     /* Toggle LED2 and LED4 */
-    BSP_LED_Toggle(LED2);
-    BSP_LED_Toggle(LED4);
+    BSP_LED_Toggle(LED0);
+    BSP_LED_Toggle(LED1);
 
     /* Insert 50 ms delay */
-    HAL_Delay(50);
-
-    /* Toggle LED1 and LED3 */
-    BSP_LED_Toggle(LED1);
-    BSP_LED_Toggle(LED3);
-
-    /* Insert 100 ms delay */
     HAL_Delay(100);
+
   }
 }
 
