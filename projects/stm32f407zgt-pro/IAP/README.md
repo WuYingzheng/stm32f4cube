@@ -40,4 +40,5 @@ start at 0x08000000, size 0x00100000, buswidth 0, chipwidth 0   ??? 256k ?  不�
 # 开发注意事项
 * 查看app与bootloader目录下的readme
 
-#
+# TODO
+  * upload image from flash
