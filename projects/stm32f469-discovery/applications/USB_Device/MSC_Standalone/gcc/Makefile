@@ -112,6 +112,11 @@ LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) \
 # Build Rules
 .PHONY: all release release-memopt debug clean
 
+debug: CFLAGS+=-g
+debug: CXXFLAGS+=-g
+debug: LDFLAGS+=-g
+debug: release
+
 all: release-memopt
 
 # 可以统计内存占用情况
@@ -132,11 +137,6 @@ release-memopt: CXXFLAGS+=-Os -fno-exceptions -ffunction-sections -fdata-section
 #fno-buildin 不使用内联函数
 release-memopt: LDFLAGS+=-Os -Wl,-gc-sections  -flto
 release-memopt: release
-
-debug: CFLAGS+=-g
-debug: CXXFLAGS+=-g
-debug: LDFLAGS+=-g
-debug: release
 
 release:  $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
 
@@ -181,12 +181,13 @@ clean:
 	rm -f $(DEPENDENT) $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
 j-flash:debug
-	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/stm32f469_discovery_jlink.cfg\
+	@openocd  -f $(STM32_SDK_DIR)/scripts/openocd/stm32f469_discovery_jlink.cfg\
 	 -c init \
 	 -c targets \
 	 -c "halt" \
 	 -c "flash write_image erase bin/$(BINELF)" \
 	 -c "verify_image bin/outp.elf" \
+	 -c "flash info 0"\
 	 -c "reset run" \
 	 -c shutdown
 

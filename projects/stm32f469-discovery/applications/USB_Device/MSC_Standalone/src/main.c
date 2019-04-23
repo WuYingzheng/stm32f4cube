@@ -44,6 +44,7 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "uart_log.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -75,7 +76,10 @@ int main(void)
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
   BSP_LED_Init(LED4);
+
+  uartLogInit(USART6);
   
+  printf("usb mass storage example\r\n");
   /* Init Device Library */
   USBD_Init(&USBD_Device, &MSC_Desc, 0);
   
