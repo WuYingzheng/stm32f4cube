@@ -2,7 +2,8 @@
   ******************************************************************************
   * @file    usbd_msc_storage_template.c
   * @author  MCD Application Team
-  * @brief   Memory management layer
+  * @brief   实现大容量存储类必须定义的操作，然后必须通过USBD_MSC_RegisterStorage()注册
+  *         到usb协议栈中
   ******************************************************************************
   * @attention
   *
@@ -93,7 +94,7 @@ USBD_StorageTypeDef USBD_MSC_Template_fops =
 };
 /*******************************************************************************
 * Function Name  : Read_Memory
-* Description    : Handle the Read operation from the microSD card.
+* Description    : Initializes the storage medium.
 * Input          : None.
 * Output         : None.
 * Return         : None.
@@ -105,7 +106,7 @@ int8_t STORAGE_Init (uint8_t lun)
 
 /*******************************************************************************
 * Function Name  : Read_Memory
-* Description    : Handle the Read operation from the STORAGE card.
+* Description    : Returns the medium capacity and block size..
 * Input          : None.
 * Output         : None.
 * Return         : None.
@@ -119,7 +120,7 @@ int8_t STORAGE_GetCapacity (uint8_t lun, uint32_t *block_num, uint16_t *block_si
 
 /*******************************************************************************
 * Function Name  : Read_Memory
-* Description    : Handle the Read operation from the STORAGE card.
+* Description    : Checks whether the medium is ready.
 * Input          : None.
 * Output         : None.
 * Return         : None.
@@ -131,7 +132,7 @@ int8_t  STORAGE_IsReady (uint8_t lun)
 
 /*******************************************************************************
 * Function Name  : Read_Memory
-* Description    : Handle the Read operation from the STORAGE card.
+* Description    : Checks whether the medium is write-protected.
 * Input          : None.
 * Output         : None.
 * Return         : None.
@@ -143,8 +144,8 @@ int8_t  STORAGE_IsWriteProtected (uint8_t lun)
 
 /*******************************************************************************
 * Function Name  : Read_Memory
-* Description    : Handle the Read operation from the STORAGE card.
-* Input          : None.
+* Description    : Reads data from the medium
+* blk_addr          : sector unit.
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
@@ -156,9 +157,9 @@ int8_t STORAGE_Read (uint8_t lun,
   return 0;
 }
 /*******************************************************************************
-* Function Name  : Write_Memory
+* Function Name  : STORAGE_Write
 * Description    : Handle the Write operation to the STORAGE card.
-* Input          : None.
+* blk_len        : number of the sector to be processed.
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
@@ -171,10 +172,10 @@ int8_t STORAGE_Write (uint8_t lun,
 }
 /*******************************************************************************
 * Function Name  : Write_Memory
-* Description    : Handle the Write operation to the STORAGE card.
+* Description    : Returns the number of supported logical units.
 * Input          : None.
 * Output         : None.
-* Return         : None.
+* Return         : number of supported logical units.
 *******************************************************************************/
 int8_t STORAGE_GetMaxLun (void)
 {

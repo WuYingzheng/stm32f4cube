@@ -41,22 +41,6 @@ The UART outputs a message on the HyperTerminal.
 Board: STM32469I-EVAL
 Tx Pin: PA.09
 Rx Pin: PA.10
-   _________________________ 
-  |           ______________|                       _______________
-  |          |USART         |                      | HyperTerminal |
-  |          |              |                      |               |
-  |          |           TX |______________________|RX             |
-  |          |              |                      |               |
-  |          |              |     RS232 Cable      |               |             
-  |          |              |                      |               |
-  |          |           RX |______________________|TX             |          
-  |          |              |                      |               |           
-  |          |______________|                      |_______________|          
-  |                         |                       
-  |                         |                    
-  |                         |                      
-  |                         |                      
-  |_STM32_Board_____________|                      
 
 
 The USART is configured as follows:

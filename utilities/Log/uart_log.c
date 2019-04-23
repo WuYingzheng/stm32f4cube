@@ -5,7 +5,6 @@
 // in your source code, the initialize the uart consele with prope routings.
 UART_HandleTypeDef UART_LOG_Handle;
 
-
 void uartLogInit(USART_TypeDef *uartx){
    UART_LOG_Handle.Instance      = uartx;
    UART_LOG_Handle.Init.BaudRate = 115200;

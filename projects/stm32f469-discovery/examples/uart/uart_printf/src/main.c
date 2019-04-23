@@ -11,6 +11,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "uart_log.h"
+#include "stdio.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -79,103 +81,20 @@ int main(void)
   BSP_LED_Init(LED3);
   BSP_LED_Init(LED4);
 
-  /*##-1- Configure the UART peripheral ######################################*/
-  /* Put the USART peripheral in the Asynchronous mode (UART Mode) */
-  /* UART configured as follows:
-      - Word Length = 8 Bits
-      - Stop Bit = One Stop bit
-      - Parity = None
-      - BaudRate = 9600 baud
-      - Hardware flow control disabled (RTS and CTS signals) */
-  UartHandle.Instance        = USARTx;
-
-  UartHandle.Init.BaudRate     = 9600;
-  UartHandle.Init.WordLength   = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits     = UART_STOPBITS_1;
-  UartHandle.Init.Parity       = UART_PARITY_NONE;
-  UartHandle.Init.HwFlowCtl    = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode         = UART_MODE_TX_RX;
-  UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
-
-  if(HAL_UART_DeInit(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }  
-  if(HAL_UART_Init(&UartHandle) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  
-#ifdef TRANSMITTER_BOARD
-
-  /* Configure User push-button in Interrupt mode */
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_EXTI);
-  
-  /* Wait for User push-button press before starting the Communication.
-     In the meantime, LED2 is blinking */
+
+  uartLogInit(USARTx);
+
+  printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
+  printf("** Test finished successfully. ** \r\n");
+
   while(UserButtonStatus == 0)
   {
       /* Toggle LED2*/
       BSP_LED_Toggle(LED2); 
       HAL_Delay(100);
   }
-  
-  BSP_LED_Off(LED2); 
-  /* The board sends the message and expects to receive it back */
-  
-  /*##-2- Start the transmission process #####################################*/  
-  /* While the UART in reception process, user can transmit data through 
-     "aTxBuffer" buffer */
-  if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE, 5000)!= HAL_OK)
-  {
-    Error_Handler();   
-  }
-  
-  /* Turn LED4 on: Transfer in transmission process is correct */
-  BSP_LED_On(LED4);
-  
-  /*##-3- Put UART peripheral in reception process ###########################
-    如果uart发送失败，那么
-   */  
-  if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 5000) != HAL_OK)
-  {
-    Error_Handler();  
-  }
-   
-  /* Turn LED3 on: Transfer in reception process is correct */
-  BSP_LED_On(LED3);
- 
-#else
-  
-  /* The board receives the message and sends it back */
 
-  /*##-2- Put UART peripheral in reception process ###########################*/
-  if(HAL_UART_Receive(&UartHandle, (uint8_t *)aRxBuffer, RXBUFFERSIZE, 0x1FFFFFF) != HAL_OK)
-  {
-    Error_Handler();
-  }
- 
-  /* Turn LED3 on: Transfer in reception process is correct */
-  BSP_LED_On(LED3);
-  
-  /*##-3- Start the transmission process #####################################*/  
-  /* While the UART in reception process, user can transmit data through 
-     "aTxBuffer" buffer */
-  if(HAL_UART_Transmit(&UartHandle, (uint8_t*)aTxBuffer, TXBUFFERSIZE, 5000)!= HAL_OK)
-  {
-    Error_Handler();
-  }
-  
-  /* Turn LED4 on: Transfer in transmission process is correct */
-  BSP_LED_On(LED4);
-  
-#endif /* TRANSMITTER_BOARD */
-
-//调用printf必须确保uart处于ready状态
-  printf("\n\r UART Printf Example: retarget the C library printf function to the UART\n\r");
-  printf("** Test finished successfully. ** \n\r");
-
-   
   /* Infinite loop */
   while (1)
   {
