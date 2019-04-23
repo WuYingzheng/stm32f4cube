@@ -1,0 +1,22 @@
+OpenDocument="usbd_msc_scsi.c", FilePath="/home/wyz/Desktop/stm32f4Cube/Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Src/usbd_msc_scsi.c", Line=618
+OpenDocument="usbd_msc_bot.c", FilePath="/home/wyz/Desktop/stm32f4Cube/Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Src/usbd_msc_bot.c", Line=229
+OpenDocument="usbd_msc.c", FilePath="/home/wyz/Desktop/stm32f4Cube/Middlewares/ST/STM32_USB_Device_Library/Class/MSC/Src/usbd_msc.c", Line=523
+OpenDocument="usbd_core.c", FilePath="/home/wyz/Desktop/stm32f4Cube/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.c", Line=326
+OpenDocument="stm32f4xx_hal_gpio.c", FilePath="/home/wyz/Desktop/stm32f4Cube/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c", Line=209
+OpenDocument="stm32469i_discovery.c", FilePath="/home/wyz/Desktop/stm32f4Cube/Drivers/BSP/stm32f469-discovery/stm32469i_discovery.c", Line=193
+OpenDocument="usbd_storage.c", FilePath="/home/wyz/Desktop/stm32f4Cube/projects/stm32f469-discovery/applications/USB_Device/MSC_Standalone/src/usbd_storage.c", Line=171
+OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f4Cube/projects/stm32f469-discovery/applications/USB_Device/MSC_Standalone/src/main.c", Line=57
+OpenToolbar="Debug", Floating=0, x=0, y=0
+OpenWindow="Call Stack", DockArea=BOTTOM, x=2, y=0, w=721, h=401, FilterBarShown=0
+OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=1, w=561, h=282, FilterBarShown=0, FilteredItems=[], RefreshRate=1
+OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=561, h=243, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
+OpenWindow="Memory 1", DockArea=BOTTOM, x=1, y=0, w=709, h=401, FilterBarShown=0, EditorAddress=0x0
+OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=561, h=282, FilterBarShown=0
+OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=410, h=548, FilterBarShown=1
+OpenWindow="Console", DockArea=BOTTOM, x=0, y=0, w=411, h=401, FilterBarShown=0
+TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;259]
+TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[152;279;106;54]
+TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[139;69;48;57;231]
+TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]
+TableHeader="Call Stack", SortCol="Function", SortOrder="ASCENDING", VisibleCols=["Function";"Stack Frame";"Source";"PC";"Return Address";"Stack Used"], ColWidths=[216;117;91;78;163;73]
