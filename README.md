@@ -31,7 +31,7 @@ if you want reflash **stlink** to **jlink**, remember to use **JLinkLicenseManag
     
 optional: you can add **STM32_SDK_DIR** to you env variable :-)
    
-   export STM32_SDK_DIR=/floder/to/stm32f4Cube
+    export STM32_SDK_DIR=/floder/to/stm32f4Cube 
 
 ## 2.2 Other Platform
 
