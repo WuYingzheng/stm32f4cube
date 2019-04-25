@@ -21,13 +21,11 @@ The **STM32CubeF4 MCU Package** projects are directly running on the STM32F4 ser
 ## 2.1 Ubuntu LTS Users
 Ubuntu users install the environment directly on host OS. :-)
 
-    1. install arm-none-eabi-gcc
-    https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm
-    2. install openocd 
-    3. sudo apt-get install git
-    4. git clone git@github.com:WuYingzheng/stm32f4cube.git
-    
-if you want reflash **stlink** to **jlink**, remember to use **JLinkLicenseManager** to add license.
+ 1. install [arm-none-eabi-gcc](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
+ 2. Download [Jlink_driver](https://www.segger.com/downloads/jlink/), [stlink_driver](https://github.com/texane/stlink)
+ 3. install openocd
+ 4. sudo apt-get install git
+ 5. git clone git@github.com:WuYingzheng/stm32f4cube.git
     
 optional: you can add **STM32_SDK_DIR** to you env variable :-)
    
@@ -56,6 +54,10 @@ optional: you can add **STM32_SDK_DIR** to you env variable :-)
   ![STM32469I-Discovery](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stm32f469-discovery1.jpg)
 	
 # 5. Troubleshooting
+## 5.1 Reflash stlink to jlink
+ * Download [Jlink_Fireware](https://www.segger.com/downloads/jlink/)
+ * if you want reflash **stlink** to **jlink**, remember to use **JLinkLicenseManager** to add license.
+## 5.2 fail to flash stm32 micro-controler
  * openocd烧录失败和stlink固件的版本有关系，如果失败请把stlink固件更新到最新版本
  * stm32f407zgt-pro芯片复位时，不能使用uart1! 解决方案，移除任何可能占用uart1的设备:
    板载ch340 uart使能后，芯片无法复位，必须关闭uart串口
