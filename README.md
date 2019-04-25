@@ -10,12 +10,12 @@
 The **STM32CubeF4 MCU Package** projects are directly running on the STM32F4 series boards. You can find in each Projects/*Board name* directories a set of software projects (Applications/Demonstration/Examples) 
 
 # 1. File Organization
-- [Documentation](https://github.com/istarc/stm32/tree/master/examples) have the following status: [![Build Status](https://travis-ci.org/istarc/stm32.svg?branch=master)](https://travis-ci.org/istarc/stm32)
-- [Drivers](http://istarc.wordpress.com/2014/07/21/stm32f4-build-your-toolchain-from-scratch/) stm32 hal driver, cmsis-core
-- [Middlerwares](https://github.com/istarc/freertos) Middleware library
-- [projects](http://mbed.org/) demo project for supported board
-- [scripts](http://istarc.wordpress.com/2014/08/04/stm32f4-behold-the-project-wizard/) script for openocd
-- [utilities](http://www.st.com/web/catalog/tools/FM116/SC959/SS1532/PF252419) inlcuding stm32 seiral flash tools, micro_lib, uart_Log/lcd_log, etc.. 
+- [Documentation](https://github.com/WuYingzheng/stm32f4cube/tree/master/Documentation) 
+- [Drivers](https://github.com/WuYingzheng/stm32f4cube/tree/master/Drivers) stm32 hal driver, cmsis-core
+- [Middlerwares](https://github.com/WuYingzheng/stm32f4cube/tree/master/Middlewares) Middleware library, including freeRTOS, Lwip, FatFS, etc...
+- [projects](https://github.com/WuYingzheng/stm32f4cube/tree/master/projects) demo project for supported board, have the following status: [![Build Status](https://travis-ci.org/istarc/stm32.svg?branch=master)](https://travis-ci.org/istarc/stm32)
+- [scripts](https://github.com/WuYingzheng/stm32f4cube/tree/master/scripts) script for openocd
+- [utilities](https://github.com/WuYingzheng/stm32f4cube/tree/master/utilities) inlcuding stm32 seiral flash tools, micro_lib, uart_Log/lcd_log, etc.. 
 
 # 2. How to Setup the Environment
 ## 2.1 Ubuntu LTS Users
