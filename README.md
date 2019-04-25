@@ -21,14 +21,15 @@ The **STM32CubeF4 MCU Package** projects are directly running on the STM32F4 ser
 ## 2.1 Ubuntu LTS Users
 Ubuntu users install the environment directly on host OS. :-)
 
-    1. install [arm-none-eabi-gcc](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
+    1. install arm-none-eabi-gcc
+    https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm
     2. install openocd 
     3. sudo apt-get install git
     4. git clone git@github.com:WuYingzheng/stm32f4cube.git
     
 if you want reflash **stlink** to **jlink**, remember to use **JLinkLicenseManager** to add license.
     
-optional: you can add **STM32_SDK_DIR**　to you env variable :-)
+optional: you can add **STM32_SDK_DIR** to you env variable :-)
    
    export STM32_SDK_DIR=/floder/to/stm32f4Cube
 
@@ -49,11 +50,10 @@ optional: you can add **STM32_SDK_DIR**　to you env variable :-)
     
 
 # 4. Boards supported
-  * STM32F4 
-    * [stm32f407zgt-pro](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/)
-    ![stm32f407zgt-pro](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stmf407zgt-pro1.jpg)
-    * [STM32469I-Discovery](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f469idiscovery.html)
-    ![STM32469I-Discovery](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stm32f469-discovery1.jpg)
+  * [stm32f407zgt-pro](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/)
+  ![stm32f407zgt-pro](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stmf407zgt-pro1.jpg)
+  * [STM32469I-Discovery](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f469idiscovery.html)
+  ![STM32469I-Discovery](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stm32f469-discovery1.jpg)
 	
 ## Troubleshooting
  * openocd烧录失败和stlink固件的版本有关系，如果失败请把stlink固件更新到最新版本
