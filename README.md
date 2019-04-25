@@ -50,7 +50,7 @@ optional: you can add **STM32_SDK_DIR** to you env variable :-)
     
 
 # 4. Boards supported
-  * [stm32f407zgt-pro](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/)
+  * [stm32f407zgt-pro](https://item.taobao.com/item.htm?spm=a230r.1.14.239.15b63b01Nxgf0Q&id=565644828969&ns=1&abbucket=6#detail)
   ![stm32f407zgt-pro](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stmf407zgt-pro1.jpg)
   * [STM32469I-Discovery](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f469idiscovery.html)
   ![STM32469I-Discovery](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stm32f469-discovery1.jpg)
