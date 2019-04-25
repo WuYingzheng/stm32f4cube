@@ -33,7 +33,7 @@ optional: you can add **STM32_SDK_DIR** to you env variable :-)
    
     export STM32_SDK_DIR=/floder/to/stm32f4Cube 
 
-## 2.2 Other Platform
+## 2.2 Other Platforms
 
     TODO
 
@@ -55,12 +55,12 @@ optional: you can add **STM32_SDK_DIR** to you env variable :-)
   * [STM32469I-Discovery](https://www.st.com/content/st_com/en/products/evaluation-tools/product-evaluation-tools/mcu-eval-tools/stm32-mcu-eval-tools/stm32-mcu-discovery-kits/32f469idiscovery.html)
   ![STM32469I-Discovery](https://github.com/WuYingzheng/stm32f4cube/blob/master/Documentation/pictures/stm32f469-discovery1.jpg)
 	
-## Troubleshooting
+# 5. Troubleshooting
  * openocd烧录失败和stlink固件的版本有关系，如果失败请把stlink固件更新到最新版本
  * stm32f407zgt-pro芯片复位时，不能使用uart1! 解决方案，移除任何可能占用uart1的设备:
    板载ch340 uart使能后，芯片无法复位，必须关闭uart串口
 
-# 4. More Info
+# 6. More Info
  - [http://istarc.wordpress.com/][1]
  - [https://github.com/istarc/stm32][2]
  - [https://registry.hub.docker.com/u/istarc/stm32/][3]
