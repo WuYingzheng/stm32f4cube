@@ -29,7 +29,7 @@ Ubuntu users install the environment directly on host OS. :-)
     
 optional: you can add **STM32_SDK_DIR** to you env variable :-)
    
-    export STM32_SDK_DIR=/floder/to/stm32f4Cube 
+    export STM32_SDK_DIR="/floder/to/stm32f4Cube"
 
 ## 2.2 Other Platforms
 
@@ -55,8 +55,9 @@ optional: you can add **STM32_SDK_DIR** to you env variable :-)
 	
 # 5. Troubleshooting
 ## 5.1 Reflash stlink to jlink
- * Download [Jlink_Fireware](https://www.segger.com/downloads/jlink/)
- * if you want reflash **stlink** to **jlink**, remember to use **JLinkLicenseManager** to add license.
+ * Download [Jlink_Fireware](https://www.segger.com/downloads/jlink/).
+ * If you have successfully reflashed **stlink** to **jlink**, remember to use **JLinkLicenseManager** to add license, so that you have full access to jlink advanced features. [Segger_J-Link_keygen](https://raw.githubusercontent.com/WuYingzheng/stm32f4cube/master/utilities/PC_Software/Segger_J-Link_keygen.exe) may help you generate jlink license with a jlink serial key(tested on windows, OK).
+ 
 ## 5.2 fail to flash stm32 micro-controler
  * openocd烧录失败和stlink固件的版本有关系，如果失败请把stlink固件更新到最新版本
  * stm32f407zgt-pro芯片复位时，不能使用uart1! 解决方案，移除任何可能占用uart1的设备:
