@@ -122,6 +122,7 @@ $(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
 #   $(CC) $(OBJECTS) $(LDFLAGS) -o $@ if
 #   C linker is required.
 $(BINDIR)/$(BINELF): $(OBJECTS)
+	mkdir -p $(BINDIR)
 	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
 	@echo "Linking complete!\n"
 	$(SIZE) $(BINDIR)/$(BINELF)

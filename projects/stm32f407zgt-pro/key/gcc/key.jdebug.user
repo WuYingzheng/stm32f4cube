@@ -1,20 +1,1 @@
-
-Breakpoint=3840854831: 158: 0, State=BP_STATE_ON
-OpenDocument="main.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/projects/stm32f407zgt-DIY/key/src/main.c", Line=0
-OpenDocument="core_cm4.h", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/CMSIS/Core/Include/core_cm4.h", Line=1678
-OpenDocument="stm32f4xx_hal_cortex.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c", Line=183
-OpenDocument="stm32f4xx_hal_gpio.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c", Line=265
-OpenDocument="stm32f407_DIY.c", FilePath="/home/wyz/Desktop/stm32f469/stm32cubeF4/Drivers/BSP/stm32f407zgt-DIY/stm32f407_DIY.c", Line=236
-OpenToolbar="Debug", Floating=0, x=0, y=0
-OpenWindow="Registers 1", DockArea=RIGHT, x=0, y=2, w=694, h=255, FilterBarShown=0, FilteredItems=[], RefreshRate=1
-OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=694, h=222, FilterBarShown=0, ExecCountersShown=0
-OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0
-OpenWindow="Memory 1", DockArea=BOTTOM, x=0, y=0, w=1016, h=243, FilterBarShown=0, EditorAddress=0x2001FFDC
-OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=694, h=217, FilterBarShown=0
-OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=283, h=706, FilterBarShown=1
-OpenWindow="Console", DockArea=BOTTOM, x=1, y=0, w=831, h=243, FilterBarShown=0
-TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[120;66;98;410]
-TableHeader="Functions", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[57;69;48;57;287]
-TableHeader="tableWidgetSamples", SortCol="Index", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]
-TableHeader="Registers 1", SortCol="Name", SortOrder="ASCENDING", VisibleCols=["Auto";"Name";"Value";"Description"], ColWidths=[37;131;142;259]
-WatchedExpression="GPIO_InitStruct"
+OpenDocument="main.c", FilePath="/Users/chao/stm32f4cube/projects/stm32f407zgt-pro/key/gcc/../src/main.c", Line=0OpenToolbar="Debug", Floating=0, x=0, y=0OpenToolbar="Breakpoints", Floating=0, x=1, y=0OpenWindow="Disassembly", DockArea=RIGHT, x=0, y=0, w=360, h=337, FilterBarShown=0, ExecCountersShown=0OpenWindow="Source", x=0, y=0, w=0, h=0, FilterBarShown=0, ExecCountersShown=0OpenWindow="Watched Data", DockArea=RIGHT, x=0, y=1, w=360, h=152, FilterBarShown=0OpenWindow="Functions", DockArea=LEFT, x=0, y=0, w=426, h=743, FilterBarShown=1OpenWindow="Console", DockArea=RIGHT, x=0, y=2, w=360, h=252, FilterBarShown=0TableHeader="Functions", SortCol="Source", SortOrder="ASCENDING", VisibleCols=["Name";"Address";"Size";"#Insts";"Source"], ColWidths=[151;70;39;49;102]TableHeader="tableWidgetSamples", SortCol="None", SortOrder="ASCENDING", VisibleCols=["Index";"Time";"Channel 0"], ColWidths=[84;119;126]TableHeader="Watched Data", SortCol="Expression", SortOrder="ASCENDING", VisibleCols=["Expression";"Value";"Location";"Refresh"], ColWidths=[56;71;93;140]WatchedExpression="LED1"
