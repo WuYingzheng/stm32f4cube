@@ -33,24 +33,21 @@ INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Core/Include/                 # 内�
 INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设备底层寄存器访问接口 
 INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
 
-include subMake/bsp.mk
+# 包含 bsp 头文件和源文件支持
+include $(STM32_SDK_DIR)/Drivers/BSP/stm32f469-discovery/bsp.mk
 # 由于shell运行顺序的问题，下面这条语句可能回到最后才复制，可能造成后续的flag错位
 #CSOURCES+=$(shell find -L $(BSP_COMPONENTS_DIR) -name '*.c')
-INCLUDES+=$(BSP_INC_DIR) $(BSP_COMPONENTS_INC)
-CSOURCES+=$(BSP_SOURCES) $(BSP_COMPONENTS_SRC)
 
 # 如果编译时显示Hal库中的变量未定义，请在stm32fxx_hal_conf.h中进行配置
-include subMake/stm32_hal.mk
-INCLUDES+=$(HAL_INC)
-CSOURCES+=$(HAL_SOURCES)
+include $(STM32_SDK_DIR)/Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.mk
+
 
 ################################## ADD YOUR CONPONENTS HERE ###############################
-FreeRTOS_PATH=$(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/Source
-include $(FreeRTOS_PATH)/Makefile
-INCLUDES+=$(FreeRTOS_INC_DIR)
+include $(STM32_SDK_DIR)/Middlewares/Third_Party/FreeRTOS/FreeRTOS.mk
+INCLUDES+=$(FreeRTOS_INC)
 CSOURCES+=$(FreeRTOS_SRC)
 
-########################### Find libraries
+########################### Find libraries ##################################
 INCLUDES_LIBS=-L$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Lib
 LINK_LIBS=-lPDMFilter_CM4_GCC_wc32
 # Create object list
@@ -116,6 +113,7 @@ $(BINDIR)/$(BINHEX): $(BINDIR)/$(BINELF)
 #   $(CC) $(OBJECTS) $(LDFLAGS) -o $@ if
 #   C linker is required.
 $(BINDIR)/$(BINELF): $(OBJECTS)
+	@mkdir -p $(BINDIR)
 	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
 	@echo "Linking complete!\n"
 	$(SIZE) $(BINDIR)/$(BINELF)

@@ -19,3 +19,6 @@ BSP_COMPONENTS_INC= -I$(STM32_SDK_DIR)/Drivers/BSP/Components/otm8009a\
 BSP_COMPONENTS_SRC= $(STM32_SDK_DIR)/Drivers/BSP/Components/otm8009a/otm8009a.c\
 					$(STM32_SDK_DIR)/Drivers/BSP/Components/ft6x06/ft6x06.c\
 					$(STM32_SDK_DIR)/Drivers/BSP/Components/cs43l22/cs43l22.c
+
+INCLUDES+=$(BSP_INC) $(BSP_COMPONENTS_INC)
+CSOURCES+=$(BSP_SOURCES) $(BSP_COMPONENTS_SRC)
