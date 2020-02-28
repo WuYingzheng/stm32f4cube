@@ -58,3 +58,5 @@ SW4STM32/
 
 # vscode 
 *.vscode
+
+*.DS_Store
