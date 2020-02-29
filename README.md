@@ -72,3 +72,5 @@ optional: you can add **STM32_SDK_DIR** to you env variable :-)
   [2]: https://github.com/istarc/stm32
   [3]: https://registry.hub.docker.com/u/istarc/stm32/
   [4]: https://vagrantcloud.com/istarc/stm32
+
+  [openocd 教程](https://www.bilibili.com/video/av86932597?from=search&seid=384530457015525304)
