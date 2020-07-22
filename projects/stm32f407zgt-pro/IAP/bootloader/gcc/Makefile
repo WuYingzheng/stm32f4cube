@@ -30,9 +30,9 @@ INC=$(shell find -L $(INCDIR) -name '*.h' -exec dirname {} \; | uniq)    # 这�
 INCLUDES=$(INC:%=-I%)
 
 INCLUDES+= -I../inc/
-INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Core/Include/                 # 内核以及内核外设相关的头文件
-INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设备底层寄存器访问接口
-INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
+INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Core/Include                 # 内核以及内核外设相关的头文件
+INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include  # 设备底层寄存器访问接口
+INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc  # 和MP3音频有关
 
 #------------------------------- BSP -------------------------------
 include $(STM32_SDK_DIR)/Drivers/BSP/$(BOARD)/bsp.mk
@@ -176,7 +176,7 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 clean:
 	rm -f $(DEPENDENT) $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
-j-flash:debug
+j-flash: debug
 	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/$(BOARD).cfg\
     -c "init" \
     -c "reset init" \
