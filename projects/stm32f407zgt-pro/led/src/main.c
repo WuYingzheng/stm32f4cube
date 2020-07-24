@@ -44,7 +44,8 @@ int main(void){
   HAL_Init();
   SystemClock_Config();
 
-  // HAL库的开发方式
+  // 方式1, HAL库的开发方式
+  // 初始化硬件
   __HAL_RCC_GPIOF_CLK_ENABLE();
   GPIO_InitTypeDef  GPIO_InitStructure;
   GPIO_InitStructure.Pin = GPIO_PIN_9|GPIO_PIN_10;
@@ -53,22 +54,35 @@ int main(void){
   GPIO_InitStructure.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStructure);
 
+  // 控制GPIO输出电压
+  /*
   HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_SET); // 关灯
   HAL_GPIO_WritePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10,GPIO_PIN_RESET); // 开灯
   HAL_GPIO_TogglePin(GPIOF,GPIO_PIN_9|GPIO_PIN_10);
+  */
 
-  //BSP_LED_Init(LED0);
-  //BSP_LED_Init(LED1);
+  // 方式2, BSP开发
+  /*
+  BSP_LED_Init(LED0);          // 初始化GPIO
+  BSP_LED_Init(LED1);          // 初始化GPIO
+  BSP_LED_Toggle(LED0);        // GPIO值反转
+  BSP_LED_Toggle(LED1);        // GPIO值反转
+  */
 
-  /* Configure EXTI Line0 (connected to PA0 pin) in interrupt mode */
-//  EXTILine0_Config();
-  
-  /* Infinite loop */
-  while (1){
-    delay(0xfffff);
-    BSP_LED_Toggle(LED0);
-    BSP_LED_Toggle(LED1);
-  }
+  /* 无线循环，led闪烁 */
+  // while (1){
+  //  delay(0xfffff);
+  //  BSP_LED_Toggle(LED0);
+  //  BSP_LED_Toggle(LED1);
+  //}
+
+  uint32_t *reg = (uint32_t *) (0x40021400 + 0x14);
+
+  *reg = 0x0000FFFF;
+
+  *reg = ~(1 << 9);
+
+  return 0;
 }
 
 /**
