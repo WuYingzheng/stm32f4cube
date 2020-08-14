@@ -41,6 +41,9 @@ static void delay(int tms){
   * @retval None
   */
 int main(void){
+  uint32_t tmp;
+  uint8_t pushed = 0;
+
   HAL_Init();
   SystemClock_Config();
 
@@ -79,8 +82,27 @@ int main(void){
   uint32_t *reg = (uint32_t *) (0x40021400 + 0x14);
 
   *reg = 0x0000FFFF;
-
   *reg = ~(1 << 9);
+  *reg = ~(1 << 8);
+
+  // KEY 1, Port E Pin2
+  __HAL_RCC_GPIOE_CLK_ENABLE();
+  reg = (uint32_t *) (0x40021000 + 0x00);  // PORT E 模式設置寄存器
+  *reg = 0x0;                              // 把寄存器配配置成輸入模式
+
+  reg = (uint32_t *) (0x40021000 + 0x0C);  // PORT E 上拉下拉寄存器
+  *reg = 1 << 4;                           // 設置PORT E爲上拉模式
+
+  reg = (uint32_t *) (0x40021000 + 0x10);  // PORT E 輸入數據寄存器
+  tmp = *reg;
+
+  while (1)
+  {
+    tmp = *reg;
+    pushed = (tmp & 0x04) == 0;
+    if (pushed)
+      BSP_LED_Toggle(LED0);
+  }
 
   return 0;
 }

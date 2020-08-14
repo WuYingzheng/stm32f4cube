@@ -1,12 +1,12 @@
-STM32_SDK_DIR=../../../..
-#　这个变量用来指定单片机芯片的型号，编译时传递给底层的hal文件
+STM32_SDK_DIR?=../../../..
+#　DEVICE 用来指定单片机芯片的型号，编译时传递给底层的hal文件
 DEVICE=STM32F407xx
 #　开发板的名称
 BOARD=stm32f407zgt-pro
 # BOARD=STM32469I-Discovery
 
 BINDIR=bin
-INCDIR=inc 
+INCDIR=../inc
 SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
 
 CC=arm-none-eabi-gcc
@@ -29,9 +29,9 @@ INC=$(shell find -L $(INCDIR) -name '*.h' -exec dirname {} \; | uniq)    # 这�
 INCLUDES=$(INC:%=-I%)
 
 INCLUDES+= -I../inc/
-INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Core/Include/                 # 内核以及内核外设相关的头文件
-INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include/  # 设备底层寄存器访问接口
-INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc   # 和MP3音频有关
+INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Core/Include                 # 内核以及内核外设相关的头文件
+INCLUDES+= -I$(STM32_SDK_DIR)/Drivers/CMSIS/Device/ST/STM32F4xx/Include  # 设备底层寄存器访问接口
+INCLUDES+= -I$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Inc  # 和MP3音频有关
 
 #------------------------------- BSP -------------------------------
 include $(STM32_SDK_DIR)/Drivers/BSP/$(BOARD)/bsp.mk
@@ -53,14 +53,30 @@ CSOURCES+=$(HAL_SOURCES)
 #INCLUDES+=$(FatFS_INC)
 #CSOURCES+=$(FatFS_SRC)
 
+# add this source so that you can re-target printf to uart
+# note! if you want printf() to work, you need re-define  ＇UART_HandleTypeDef UART_LOG_Handle＇
+# in you program, then initialize it.
+INCLUDES+=-I$(STM32_SDK_DIR)/utilities/Log
+CSOURCES+=$(STM32_SDK_DIR)/utilities/Log/uart_log.c
+
+# if you want to link micro-lib to your program, please add this the following
+# components. micro-lib includes some functions which is already in the stdlib,
+# but have a faster speed, as well as some useful tools.
+INCLUDES+=-I$(STM32_SDK_DIR)/utilities/micro_lib/ 
+CSOURCES+=$(STM32_SDK_DIR)/utilities/micro_lib/micro_lib.c
+
 #######################################################################################
 # Find libraries
 INCLUDES_LIBS=-L$(STM32_SDK_DIR)/Middlewares/ST/STM32_Audio/Addons/PDM/Lib
 LINK_LIBS=-lPDMFilter_CM4_GCC_wc32
+
 # Create object list
 OBJECTS=$(ASOURCES:%.s=%.o)
 OBJECTS+=$(CSOURCES:%.c=%.o)
 OBJECTS+=$(CXXSOURCES:%.cpp=%.o)
+# Create dependent file
+DEPENDENT:=$(patsubst %c,%d,$(CSOURCES))
+DEPENDENT+=$(patsubst %cpp,%d,$(CXXSOURCES))
 # Define output files ELF & IHEX
 BINELF=outp.elf
 BINHEX=outp.hex
@@ -73,21 +89,27 @@ MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian \
 DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
 CFLAGS=-c $(MCUFLAGS) $(INCLUDES) $(DEFS)  --specs=nano.specs
 CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
+
+# Need following option for LTO as LTO will treat retarget functions as
+# unused without following option
+# 使用重定向标准库函数，并且不会引起冲突
+CFLAGS+=-fno-builtin
+
 # LINKER FLAGS
 LDSCRIPT=$(BOARD).ld
-LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) --specs=nosys.specs --specs=nano.specs $(INCLUDES_LIBS) $(LINK_LIBS)
+LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) \
+			--specs=nosys.specs --specs=nano.specs \
+			-Wl,-Map=$(BINDIR)/output.map \
+			-Wl,-gc-sections\
+			$(INCLUDES_LIBS) $(LINK_LIBS)
 
 ###
 # Build Rules
 .PHONY: all release release-memopt debug clean
 
-debug: CFLAGS+=-g
-debug: CXXFLAGS+=-g
-debug: LDFLAGS+=-g
-debug: release
-
 all: release-memopt
 
+# 可以统计内存占用情况
 release-memopt-blame: CFLAGS+=-g
 release-memopt-blame: CXXFLAGS+=-g
 release-memopt-blame: LDFLAGS+=-g -Wl,-Map=$(BINDIR)/output.map
@@ -98,14 +120,20 @@ release-memopt-blame:
 	@echo "\n... and corresponging source files to blame.\n"
 	$(NM) --reverse-sort --size-sort -S -tx $(BINDIR)/$(BINELF) | head -10 | cut -d':' -f2 | cut -d' ' -f1 | $(A2L) -e $(BINDIR)/$(BINELF) | cat -n # Output legend: man addr2line
 
+# 优化内存,效果非常显著
 release-memopt: DEFS+=-DCUSTOM_NEW -DNO_EXCEPTIONS
 release-memopt: CFLAGS+=-Os -ffunction-sections -fdata-sections -fno-builtin # -flto
 release-memopt: CXXFLAGS+=-Os -fno-exceptions -ffunction-sections -fdata-sections -fno-builtin -fno-rtti # -flto
 #fno-buildin 不使用内联函数
-release-memopt: LDFLAGS+=-Os -Wl,-gc-sections --specs=nano.specs # -flto
+release-memopt: LDFLAGS+=-Os -Wl,-gc-sections  -flto
 release-memopt: release
 
-release: $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
+debug: CFLAGS+=-g
+debug: CXXFLAGS+=-g
+debug: LDFLAGS+=-g
+debug: release
+
+release:  $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
 
 $(BINDIR)/$(BINHEX): $(BINDIR)/$(BINELF)
 	$(CP) -O ihex $< $@
@@ -122,17 +150,22 @@ $(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
 #   $(CC) $(OBJECTS) $(LDFLAGS) -o $@ if
 #   C linker is required.
 $(BINDIR)/$(BINELF): $(OBJECTS)
-	mkdir -p $(BINDIR)
-	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@
+	mkdir -p $(@D)
+	$(CXX) $(LDFLAGS) $^ -o $@
 	@echo "Linking complete!\n"
 	$(SIZE) $(BINDIR)/$(BINELF)
 
+# Include all .d files 
+# 这一行必须添加在$(BINDIR)/$(BINELF)目标的后面，否则只能编译改变后相关的文件，不能重新链接，
+# 原因还没想明白
+-include $(DEPENDENT)
+
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) -MMD $< -o $@
 	@echo "Compiled "$<"!\n"
 
 %.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -MMD $< -o $@
 	@echo "Compiled "$<"!\n"
 
 %.o: %.s
@@ -152,12 +185,12 @@ j-flash:debug
 	 -c "reset run" \
 	 -c shutdown
 
-st-flash: release
-	openocd -f  board/stm32f429discovery.cfg\
+flash: $(BINDIR)/$(BINELF)
+	openocd -f  interface/jlink.cfg -f target/stm32f4x.cfg\
     -c "init" \
     -c "reset init" \
-    -c "flash probe 0"\
     -c "flash info 0"\
     -c "program bin/"$(BINELF)" verify reset" \
     -c "reset run"\
     -c "shutdown"
+

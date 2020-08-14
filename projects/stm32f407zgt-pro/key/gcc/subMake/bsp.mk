@@ -1,8 +1,8 @@
-BSP_INC= -I$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-DIY           # bsp
+BSP_INC= -I$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-pro         # bsp
 
-BSP_SOURCES=$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-DIY/stm32f4_discovery_accelerometer.c\
-			$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-DIY/stm32f4_discovery_audio.c\
-			$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-DIY/stm32f407_DIY.c\
+BSP_SOURCES=$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-pro/stm32f4_discovery_accelerometer.c\
+			$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-pro/stm32f4_discovery_audio.c\
+			$(STM32_SDK_DIR)/Drivers/BSP/stm32f407zgt-pro/stm32f407_DIY.c\
 
 
 BSP_COMPONENTS_INC= -I$(STM32_SDK_DIR)/Drivers/BSP/Components/cs43l22\

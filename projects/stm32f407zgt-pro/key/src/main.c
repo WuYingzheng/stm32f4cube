@@ -49,10 +49,9 @@ int main(void){
   BSP_LED_Init(LED0);
   BSP_LED_Init(LED1);
 
-
   BSP_BUTTON_Init(BUTTON0,BUTTON_MODE_EXTI);
   /* Configure EXTI Line0 (connected to PA0 pin) in interrupt mode */
-//  EXTILine4_Config();
+  // EXTILine4_Config();
   
   /* Infinite loop */
   while (1){
