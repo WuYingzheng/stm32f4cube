@@ -1,14 +1,34 @@
-STM32_SDK_DIR=../../../../../..
+STM32_SDK_DIR?=../../../../../..
 #　这个变量用来指定单片机芯片的型号，编译时传递给底层的hal文件
 DEVICE=STM32F469xx
 #　开发板的名称
 BOARD=stm32f469-discovery
-# BOARD=STM32469I-Discovery
 
 BINDIR=bin
-INCDIR=inc 
-SRCDIR=boot ../src   # 注意不要将子目录添加到变量中
+INCDIR=../inc
+SRCDIR=boot ../src        # 注意不要将子目录添加到变量中
+LDSCRIPT=$(STM32_SDK_DIR)/scripts/linker_script/STM32F469_QSPI.ld  # 链接脚本
 
+# "Drivers/BSP/STM32469I-Discovery/stm32469i_discovery.o"
+# "Drivers/CMSIS/system_stm32f4xx.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_cortex.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_dma.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_flash_ex.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_gpio.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_i2c.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_pwr.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_pwr_ex.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_qspi.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc.o"
+# "Drivers/STM32F4xx_HAL_Driver/stm32f4xx_hal_rcc_ex.o"
+# "Example/SW4STM32/startup_stm32f469xx.o"
+# "Example/User/main.o"
+# "Example/User/stm32f4xx_hal_msp.o"
+# "Example/User/stm32f4xx_it.o"
+
+# 工具链选择
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
 LD=arm-none-eabi-ld
@@ -66,7 +86,7 @@ CSOURCES+=$(STM32_SDK_DIR)/utilities/Log/uart_log.c
 # if you want to link micro-lib to your program, please add this the following
 # components. micro-lib includes some functions which is already in the stdlib,
 # but have a faster speed, as well as some useful tools.
-INCLUDES+=-I$(STM32_SDK_DIR)/utilities/micro_lib/ 
+INCLUDES+=-I$(STM32_SDK_DIR)/utilities/micro_lib/
 CSOURCES+=$(STM32_SDK_DIR)/utilities/micro_lib/micro_lib.c
 
 #######################################################################################
@@ -87,8 +107,7 @@ BINHEX=outp.hex
 BINARY=outp.bin
 
 # MCU FLAGS
-MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian \
--mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb-interwork
+MCUFLAGS=-mcpu=cortex-m4 -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -mthumb-interwork
 
 DEFS=-DUSE_STDPERIPH_DRIVER=" " -D$(DEVICE)=" "
 CFLAGS=-c $(MCUFLAGS) $(INCLUDES) $(DEFS)  --specs=nano.specs
@@ -100,12 +119,11 @@ CXXFLAGS=-c $(MCUFLAGS) $(DEFS) $(INCLUDES) -std=c++11
 CFLAGS+=-fno-builtin
 
 # LINKER FLAGS
-LDSCRIPT=$(BOARD).ld
-LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) \
+
+LDFLAGS =-T $(LDSCRIPT) $(MCUFLAGS) $(INCLUDES_LIBS) $(LINK_LIBS)\
 			--specs=nosys.specs --specs=nano.specs \
 			-Wl,-Map=$(BINDIR)/output.map \
-			-Wl,-gc-sections\
-			$(INCLUDES_LIBS) $(LINK_LIBS)
+			-Wl,-gc-sections
 
 ###
 # Build Rules
@@ -137,29 +155,22 @@ debug: CXXFLAGS+=-g
 debug: LDFLAGS+=-g
 debug: release
 
-release:  $(BINDIR)/$(BINHEX) $(BINDIR)/$(BINARY)
+release: $(BINDIR)/$(BINELF)
+	@echo "Finished building target: $<!\n"
+	@make --no-print-directory post-build
 
-$(BINDIR)/$(BINHEX): $(BINDIR)/$(BINELF)
-	$(CP) -O ihex $< $@
-	@echo "Objcopy from ELF to IHEX complete!\n"
-
-$(BINDIR)/$(BINARY):$(BINDIR)/$(BINELF)
-	$(CP) -S -O binary $< $@
-	@echo "Objcopy from ELF to BIN complete!\n"
 ##
 # C++ linking is used.
 #
 # Change
-#   $(CXX) $(OBJECTS) $(LDFLAGS) -o $@ to 
+#   $(CXX) $(OBJECTS) $(LDFLAGS) -o $@ to
 #   $(CC) $(OBJECTS) $(LDFLAGS) -o $@ if
 #   C linker is required.
 $(BINDIR)/$(BINELF): $(OBJECTS)
-	mkdir -p $(@D)
+	@mkdir -p $(@D)
 	$(CXX) $(LDFLAGS) $^ -o $@
-	@echo "Linking complete!\n"
-	$(SIZE) $(BINDIR)/$(BINELF)
 
-# Include all .d files 
+# Include all .d files
 # 这一行必须添加在$(BINDIR)/$(BINELF)目标的后面，否则只能编译改变后相关的文件，不能重新链接，
 # 原因还没想明白
 -include $(DEPENDENT)
@@ -176,9 +187,18 @@ $(BINDIR)/$(BINELF): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 	@echo "Assambled "$<"!\n"
 
+# 后处理，生成 .bin .hex 文件
+post-build:
+	-@echo 'Generating binary and Printing size information:'
+	$(CP) -O binary $(BINDIR)/$(BINELF) $(BINDIR)/$(BINARY)
+	$(CP) -O ihex   $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX)
+	$(SIZE) $(BINDIR)/$(BINELF)
+	-@echo ' '
+
 clean:
 	rm -f $(DEPENDENT) $(OBJECTS) $(BINDIR)/$(BINELF) $(BINDIR)/$(BINHEX) $(BINDIR)/output.map
 
+# 以jlink烧录文件
 j-flash:debug
 	openocd  -f $(STM32_SDK_DIR)/scripts/openocd/stm32f469_discovery_jlink.cfg\
 	 -c init \
@@ -189,6 +209,7 @@ j-flash:debug
 	 -c "reset run" \
 	 -c shutdown
 
+# 通过stlink烧录文件
 st-flash: release
 	openocd -f  board/stm32f429discovery.cfg\
     -c "init" \
